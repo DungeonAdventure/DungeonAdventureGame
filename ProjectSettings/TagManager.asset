@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Attack
   layers:
   - Default
   - TransparentFX
@@ -11,10 +12,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Earth
+  - Roads
+  - Objects
+  - Weather
   - 
   - 
   - 
@@ -40,4 +41,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Tiles
+    uniqueID: 3865308043
+    locked: 0
+  - name: Grass
+    uniqueID: 3277085909
+    locked: 0
+  - name: Objects
+    uniqueID: 561869287
+    locked: 0
+  - name: Imitation
+    uniqueID: 3517967339
     locked: 0
