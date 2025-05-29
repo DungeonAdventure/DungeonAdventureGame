@@ -1,46 +1,30 @@
-namespace Controller
-{
+namespace Controller {
     using UnityEngine;
 
-    public class PlayerSpawner : MonoBehaviour
-    {
+    public class PlayerSpawner : MonoBehaviour {
         public Transform defaultSpawnPoint;
         public Transform leftSpawnPoint;
         public Transform rightSpawnPoint;
         public Transform topSpawnPoint;
         public Transform bottomSpawnPoint;
 
-        void Start()
-        {
+        void Start() {
             Vector2 spawnPosition = defaultSpawnPoint != null ? defaultSpawnPoint.position : Vector2.zero;
+            string dir = SceneTransitionManager.Instance != null ? SceneTransitionManager.Instance.lastExitDirection : null;
 
-            string direction = SceneTransitionManager.Instance != null ? SceneTransitionManager.Instance.lastExitDirection : null;
-            switch (direction)
-            {
-                case "Left":
-                    if (leftSpawnPoint != null) spawnPosition = leftSpawnPoint.position;
-                    break;
-                case "Right":
-                    if (rightSpawnPoint != null) spawnPosition = rightSpawnPoint.position;
-                    break;
-                case "Top":
-                    if (topSpawnPoint != null) spawnPosition = topSpawnPoint.position;
-                    break;
-                case "Bottom":
-                    if (bottomSpawnPoint != null) spawnPosition = bottomSpawnPoint.position;
-                    break;
+            switch (dir) {
+                case "Left": if (leftSpawnPoint) spawnPosition = leftSpawnPoint.position; break;
+                case "Right": if (rightSpawnPoint) spawnPosition = rightSpawnPoint.position; break;
+                case "Top": if (topSpawnPoint) spawnPosition = topSpawnPoint.position; break;
+                case "Bottom": if (bottomSpawnPoint) spawnPosition = bottomSpawnPoint.position; break;
             }
 
             GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
+            if (player != null) {
                 player.transform.position = spawnPosition;
-            }
-            else
-            {
-                Debug.LogWarning("Player object not found in scene!");
+            } else {
+                Debug.LogWarning("Player not found in scene!");
             }
         }
     }
-
 }
