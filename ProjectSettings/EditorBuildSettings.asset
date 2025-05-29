@@ -17,4 +17,20 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/ForestPixelLand/Scenes/OgreCave.unity
     guid: 717b8f967ee17f848bf1d267a4b7d056
+  - enabled: 1
+    path: Assets/Scenes/acobble_scene_00.unity
+    guid: 159eccb71f1ec49deae38ce9f698111f
+  - enabled: 1
+    path: Assets/Scenes/VincentMainScene.unity
+    guid: 5ba238c708612ee4f849b6c45c721752
+  - enabled: 1
+    path: Assets/Scenes/LBTile.unity
+    guid: b683338d37b91264ab3eca8014b4563e
+  - enabled: 1
+    path: Assets/Scenes/BottomleftScene.unity
+    guid: eaef7eb08f082c241b063676218cd613
+  - enabled: 1
+    path: Assets/Scenes/acobble_scene2.unity
+    guid: 35eb121a4a966488faa4a643c529e76d
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0
