@@ -1,55 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.Android;
 
 namespace Model
 {
-    // Abstract class that represents a heroic character.
     public abstract class Hero : DungeonCharacter
     {
-        private int level;
-        private int experiencePoints;
+        private float myChanceToBlock;
 
-        // Properties for controlled access
-        public int Level { get => level; protected set => level = value; }
-        public int ExperiencePoints { get => experiencePoints; protected set => experiencePoints = value; }
-
-        // Constructor to initialize DungeonCharacter and Hero properties
-        protected Hero(string name, int hitPoints, int damageMin, int damageMax, 
-            int attackSpeed, int moveSpeed, float chanceToCrit, int level = 1, int experiencePoints = 0)
-            : base(name, hitPoints, damageMin, damageMax, attackSpeed, moveSpeed, chanceToCrit)
+        public float ChanceToBlock
         {
-            this.level = level;
-            this.experiencePoints = experiencePoints;
+            get => myChanceToBlock;
+            protected set
+            {
+                if (value < 0.0f || value > 1.0f)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "Value must be between 0.0 and 1.0");
+                myChanceToBlock = value;
+            }
         }
 
-        // Attacks the specified target with a basic implementation
+        protected Hero(string name, int hitPoints, int damageMin, int damageMax, int attackSpeed, int moveSpeed,
+            float chanceToCrit, float theChanceToBlock)
+            : base(name, hitPoints, damageMin, damageMax, attackSpeed, moveSpeed, chanceToCrit)
+        {
+            if (attackSpeed < 1)
+            {
+                throw new ArgumentException("Heroes must have at least 1 attack speed");
+            }
+            
+            myChanceToBlock = theChanceToBlock;
+        }
+
         public override void Attack(DungeonCharacter target)
         {
             if (target == null || !target.IsAlive()) return;
+            
+            Random random = new Random();
+            int damage = random.Next(DamageMin, DamageMax + 1);
 
-            // Basic attack: Deal random damage between DamageMin and DamageMax
-            int damage = UnityEngine.Random.Range(DamageMin, DamageMax + 1);
-            if (UnityEngine.Random.value < ChanceToCrit)
+            if (random.NextDouble() < ChanceToCrit)
             {
-                damage *= 2; // Double damage on critical hit
+                damage *= 2;
             }
+
             target.TakeDamage(damage);
         }
 
-        // Takes damage with a basic implementation
         public override void TakeDamage(int damage)
         {
-            HitPoints -= damage;
-            if (HitPoints < 0) HitPoints = 0;
+            if (damage <= 0) return;
+
+            Random random = new Random();
+
+            if (random.NextDouble() < ChanceToBlock)
+            {
+                return;
+            }
+            
+            HitPoints = Math.Max(0, HitPoints - damage);
         }
 
-        // Checks if the character is alive
         public override bool IsAlive()
         {
             return HitPoints > 0;
         }
-
-        // Uses a hero-specific special ability (to be implemented by subclasses)
-        public abstract void UseSpecialAbility();
+        
+        public abstract void UseSpecialAbility(DungeonCharacter target = null);
+        
+        public virtual string GetCombatStats()
+        {
+            return $"{Name} - HP: {HitPoints}, Damage: {DamageMin}-{DamageMax}, " +
+                   $"Attack Speed: {AttackSpeed}, Block Chance: {ChanceToBlock:P0}, " +
+                   $"Crit Chance: {ChanceToCrit:P0}";
+        }
     }
 }
