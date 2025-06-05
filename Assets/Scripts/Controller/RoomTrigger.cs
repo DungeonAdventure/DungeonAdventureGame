@@ -1,27 +1,21 @@
-namespace Controller
-{
-    using Model;
-    using UnityEngine;
+using UnityEngine;
 
-    public class RoomTrigger : MonoBehaviour
-    {
+namespace Controller {
+
+    public class RoomTrigger : MonoBehaviour {
         public string exitDirection; // "Left", "Right", "Top", "Bottom"
 
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                Dungeon dungeon = FindObjectOfType<Dungeon>();
-                if (dungeon != null)
-                {
-                    Vector2Int nextPos = dungeon.GetOrCreateRoomFromExit(dungeon.playerPosition, exitDirection);
-                    Room nextRoom = dungeon.GetRoom(nextPos);
+        private void OnTriggerEnter2D(Collider2D other) {
+            if (other.CompareTag("Player")) {
+                if (string.IsNullOrEmpty(exitDirection)) {
+                    Debug.LogError("RoomTrigger: exitDirection is not set! Please set it in the Inspector.");
+                    return;
+                }
 
-                    if (nextRoom != null)
-                    {
-                        dungeon.playerPosition = nextPos; // Update player's position
-                        SceneTransitionManager.Instance.TransitionToScene(nextRoom.sceneName, nextPos, exitDirection);
-                    }
+                if (SceneTransitionManager.Instance != null) {
+                    SceneTransitionManager.Instance.TransitionToScene(exitDirection);
+                } else {
+                    Debug.LogError("SceneTransitionManager is missing!");
                 }
             }
         }

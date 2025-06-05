@@ -4,6 +4,21 @@ public class MenuControler : MonoBehaviour
 {   
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public GameObject menuCanvas;
+    public static MenuControler Instance;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+
+        }
+    }
 
     void Start()
     {
@@ -19,6 +34,4 @@ public class MenuControler : MonoBehaviour
             menuCanvas.SetActive(!menuCanvas.activeSelf);
         }
     }
-    
-    
 }
