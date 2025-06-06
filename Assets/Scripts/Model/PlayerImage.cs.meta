@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 09babb39be76b3a43b4d8e518c542fd6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 315158
+  packageName: Pixel World - Forest and Village
+  packageVersion: 1.0
+  assetPath: Assets/ForestPixelLand/Scripts/Hero/PlayerGraphic.cs
+  uploadId: 745488
