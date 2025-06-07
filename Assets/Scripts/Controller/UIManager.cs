@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GameScripts.Control;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -59,6 +60,10 @@ public class UIManager : MonoBehaviour
         
         panelGameInformation.SetActive(false);
         panelTopTabSettings.SetActive(false);
+        
+        if (SceneManager.sceneCount == 1) {
+            SceneManager.LoadScene("5thScenes", LoadSceneMode.Additive);
+        }
     }
 
     // 显示英雄命名面板

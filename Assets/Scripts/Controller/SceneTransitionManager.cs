@@ -19,9 +19,9 @@ namespace Controller {
         }
         
         private void Start() {
-            if (SceneManager.sceneCount == 1) {
-                SceneManager.LoadScene("5thScenes", LoadSceneMode.Additive);
-            }
+            // if (SceneManager.sceneCount == 1) {
+            //     SceneManager.LoadScene("5thScenes", LoadSceneMode.Additive);
+            // }
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {

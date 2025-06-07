@@ -2,7 +2,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using GameScripts.Model;
+using Model;
 
 
 // update main menu of selction role UI information 
@@ -26,7 +26,7 @@ public class CharacterSelectManager : MonoBehaviour
     public void SelectWarrior()
     {   
         Debug.Log("✅ Warrior selected!");
-        selectedHero = new Warrior("Warrior");
+        selectedHero = new Knight("Warrior");
         portraitAnimator.runtimeAnimatorController = warriorController;
 
         UpdateHeroUI();
@@ -45,7 +45,7 @@ public class CharacterSelectManager : MonoBehaviour
     public void SelectThief()
     {
         Debug.Log("✅ Thief selected!");
-        selectedHero = new Thief("Thief");
+        selectedHero = new Knight("Thief");
         portraitAnimator.runtimeAnimatorController = thiefController;
         UpdateHeroUI();
     }
@@ -53,7 +53,7 @@ public class CharacterSelectManager : MonoBehaviour
     public void SelectPriestess()
     {   
         Debug.Log("✅ Mage selected!");
-        selectedHero = new Priestess("Priestess");
+        selectedHero = new Knight("Priestess");
         UpdateHeroUI();
         portraitAnimator.runtimeAnimatorController = priestessController;
     }
@@ -65,19 +65,19 @@ public class CharacterSelectManager : MonoBehaviour
             Debug.LogWarning("⚠ Hero is null!");
             return;
         }
-        Debug.Log($" Hero Stats - HP: {selectedHero.HitPoints}, ATK: {selectedHero.MinDamage}-{selectedHero.MaxDamage}, SPD: {selectedHero.AttackSpeed}");
+        Debug.Log($" Hero Stats - HP: {selectedHero.HitPoints}, ATK: {selectedHero.DamageMin}-{selectedHero.DamageMax}, SPD: {selectedHero.AttackSpeed}");
         
         textName.text = selectedHero.Name;
         
         textHP.text = "HP: " + selectedHero.HitPoints;
         
-        textATK.text = "ATK: " + selectedHero.MinDamage + " - " + selectedHero.MaxDamage;
+        textATK.text = "ATK: " + selectedHero.DamageMin + " - " + selectedHero.DamageMax;
         
         textSPEED.text = "SPD: " + selectedHero.AttackSpeed;
         
-        textDescription.text = selectedHero.Description;
+        // textDescription.text = selectedHero.Description;
         
-        portraitImage.sprite = selectedHero.Portrait;
+        // portraitImage.sprite = selectedHero.Portrait;
         
     }
 
