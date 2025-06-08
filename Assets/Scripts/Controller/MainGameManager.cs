@@ -6,14 +6,15 @@ namespace GameScripts.Control
 {
     public class MainGameManager : MonoBehaviour
     {
+        public static MainGameManager Instance { get; private set; }
         public Transform spawnPoint;
         public GameObject warriorPrefab;
         public GameObject thiefPrefab;
         public GameObject priestessPrefab;
-
+        public PillarCollector PillarCollector { get; private set; }
 
         void Start()
-        {
+        {  DatabaseInitializer.Initialize();
             // // ⛔ avoid empty null 
             // if (DungeonAdventure.Instance == null || DungeonAdventure.Instance.SelectedHero == null)
             // {
@@ -40,6 +41,19 @@ namespace GameScripts.Control
             //     Debug.Log("🛠 是 Priestess，准备生成...");
             //     heroObj = Instantiate(priestessPrefab, spawnPoint.position, Quaternion.identity);
             // }
+        }
+        void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            PillarCollector = new PillarCollector(); // 💡 Initialize collector
         }
 
     }
