@@ -2,9 +2,14 @@ using UnityEngine;
 
 namespace Model
 {
+    /// <summary>
+    /// Defines the Ogre class, inherits from the Monster base class.
+    /// </summary>
     public class Ogre : Monster
     {
-        public Ogre(string name = "Ogre") 
+        /// Constructs the class, with a parameter that establishes the name of the class, Ogre.
+        /// <param name="Ogre">The unique name/type of the class (Ogre).</param>
+        public Ogre(string name = "Ogre")
             : base(
                 name: name,
                 hitPoints: 200,
@@ -18,7 +23,7 @@ namespace Model
                 maxHeal: 60
             )
         {
-            // Ogre with base Monster behavior
+            
         }
     }
 }

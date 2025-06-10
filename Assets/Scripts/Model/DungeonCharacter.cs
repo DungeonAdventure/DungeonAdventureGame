@@ -1,6 +1,5 @@
 namespace Model
 {
-    // Abstract class that represents a character.
     public abstract class DungeonCharacter
     {
         private string name;
@@ -11,7 +10,6 @@ namespace Model
         private int moveSpeed;
         private float chanceToCrit;
 
-        // Properties for controlled access
         public string Name { get => name; set => name = value; }
         public int HitPoints { get => hitPoints; protected set => hitPoints = value; }
         public int DamageMin { get => damageMin; protected set => damageMin = value; }
@@ -20,7 +18,6 @@ namespace Model
         public int MoveSpeed { get => moveSpeed; protected set => moveSpeed = value; }
         public float ChanceToCrit { get => chanceToCrit; protected set => chanceToCrit = value; }
 
-        // Constructor for initialization
         protected DungeonCharacter(string name, int hitPoints, int damageMin, int damageMax, 
             int attackSpeed, int moveSpeed, float chanceToCrit)
         {
@@ -33,13 +30,15 @@ namespace Model
             this.chanceToCrit = chanceToCrit;
         }
 
-        // Attacks the specified target.
         public abstract void Attack(DungeonCharacter target);
 
-        // Takes damage.
         public abstract void TakeDamage(int damage);
 
-        // Checks if the character is alive.
         public abstract bool IsAlive();
+        
+        public void LoadFromSaveData(CharacterSaveData data)
+        {
+            HitPoints = data.hitPoints;
+        }
     }
 }
