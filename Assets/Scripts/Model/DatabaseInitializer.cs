@@ -3,10 +3,19 @@ using Mono.Data.Sqlite;
 using System.Data;
 using System.IO;
 
+/// <summary>
+/// Initializes and manages the SQLite database for storing monster data.
+/// </summary>
 public static class DatabaseInitializer
 {
+    /// <summary>
+    /// The file path to the SQLite database file.
+    /// </summary>
     private static string dbPath = "URI=file:" + Application.persistentDataPath + "/dungeon_save.db";
 
+    /// <summary>
+    /// Initializes the database by creating the required table and inserting default monster entries if not already present.
+    /// </summary>
     public static void Initialize()
     {
         if (!File.Exists(Application.persistentDataPath + "/dungeon_save.db"))
@@ -20,7 +29,7 @@ public static class DatabaseInitializer
 
             using (var cmd = conn.CreateCommand())
             {
-                // Create table if it doesn't exist
+                // Create the Monsters table if it doesn't already exist
                 cmd.CommandText = @"
                     CREATE TABLE IF NOT EXISTS Monsters (
                         Name TEXT PRIMARY KEY,
@@ -46,6 +55,20 @@ public static class DatabaseInitializer
         Debug.Log("Monster database initialized.");
     }
 
+    /// <summary>
+    /// Inserts a monster record into the Monsters table if it does not already exist.
+    /// </summary>
+    /// <param name="conn">The SQLite database connection.</param>
+    /// <param name="name">The name of the monster.</param>
+    /// <param name="hp">The hit points of the monster.</param>
+    /// <param name="dmgMin">Minimum damage value.</param>
+    /// <param name="dmgMax">Maximum damage value.</param>
+    /// <param name="atkSpeed">Attack speed of the monster.</param>
+    /// <param name="moveSpeed">Movement speed of the monster.</param>
+    /// <param name="crit">Chance to land a critical hit (0.0 to 1.0).</param>
+    /// <param name="healChance">Chance to heal after taking damage (0.0 to 1.0).</param>
+    /// <param name="healMin">Minimum healing value.</param>
+    /// <param name="healMax">Maximum healing value.</param>
     private static void InsertMonster(SqliteConnection conn, string name, int hp, int dmgMin, int dmgMax, int atkSpeed, int moveSpeed,
                                       float crit, float healChance, int healMin, int healMax)
     {

@@ -5,10 +5,18 @@ using System.IO;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
+/// <summary>
+/// Handles saving and loading game data using SQLite.
+/// Stores player info and room states to a local file.
+/// </summary>
 public static class SaveSystem
 {
+    // Database path: stored in the persistent data directory
     private static string dbName = "URI=file:" + Application.persistentDataPath + "/DungeonSave.db";
 
+    /// <summary>
+    /// Initializes the SQLite database and tables if they do not exist.
+    /// </summary>
     public static void InitializeDatabase()
     {
         using var conn = new SqliteConnection(dbName);
@@ -16,7 +24,7 @@ public static class SaveSystem
 
         using var cmd = conn.CreateCommand();
 
-        // Player Table
+        // Create the Player table if it doesn't exist
         cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Player (
                                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 Name TEXT,
@@ -29,7 +37,7 @@ public static class SaveSystem
                             );";
         cmd.ExecuteNonQuery();
 
-        // Room Table
+        // Create the Room table if it doesn't exist
         cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Room (
                                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 X INTEGER,
@@ -45,6 +53,9 @@ public static class SaveSystem
         Debug.Log("Database initialized at: " + Application.persistentDataPath);
     }
 
+    /// <summary>
+    /// Saves the player's current state to the database.
+    /// </summary>
     public static void SavePlayer(string name, int hp, int posX, int posY, string pillarList, string sceneName)
     {
         using var conn = new SqliteConnection(dbName);
@@ -52,9 +63,11 @@ public static class SaveSystem
 
         using var cmd = conn.CreateCommand();
 
+        // Clear existing player data to ensure only one save exists
         cmd.CommandText = @"DELETE FROM Player;";
         cmd.ExecuteNonQuery();
 
+        // Insert new player data
         cmd.CommandText = @"INSERT INTO Player (Name, HP, PosX, PosY, PillarsCollected, SceneName, SaveTime)
                             VALUES (@name, @hp, @x, @y, @pillars, @scene, @time);";
         cmd.Parameters.AddWithValue("@name", name);
@@ -69,8 +82,12 @@ public static class SaveSystem
         Debug.Log("Player saved.");
     }
 
+    /// <summary>
+    /// Loads the most recent player data from the database.
+    /// </summary>
     public static void LoadPlayer(out string name, out int hp, out int posX, out int posY, out string pillars, out string scene)
     {
+        // Initialize output values
         name = "";
         hp = 0;
         posX = 0;
@@ -102,6 +119,9 @@ public static class SaveSystem
         }
     }
 
+    /// <summary>
+    /// Saves data for a single room to the database.
+    /// </summary>
     public static void SaveRoom(int x, int y, bool hasPit, string pillar, bool hasPotion, bool visited, string sceneName)
     {
         using var conn = new SqliteConnection(dbName);
@@ -120,6 +140,10 @@ public static class SaveSystem
         cmd.ExecuteNonQuery();
     }
 
+    /// <summary>
+    /// Loads all saved rooms from the database into a list.
+    /// </summary>
+    /// <returns>List of RoomData representing saved room states.</returns>
     public static List<RoomData> LoadRooms()
     {
         var rooms = new List<RoomData>();
@@ -149,14 +173,17 @@ public static class SaveSystem
     }
 }
 
+/// <summary>
+/// Data structure to store information about a room for saving/loading purposes.
+/// </summary>
 [Serializable]
 public class RoomData
 {
-    public int X;
-    public int Y;
-    public bool HasPit;
-    public string HasPillar;
-    public bool HasPotion;
-    public bool Visited;
-    public string SceneName;
+    public int X;               // Grid X position
+    public int Y;               // Grid Y position
+    public bool HasPit;         // Whether this room has a pit trap
+    public string HasPillar;    // Type of pillar in the room (e.g., "A", "E", etc.)
+    public bool HasPotion;      // Whether this room contains a potion
+    public bool Visited;        // Whether the player has visited this room
+    public string SceneName;    // Name of the Unity scene associated with this room
 }
