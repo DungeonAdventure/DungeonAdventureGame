@@ -1,97 +1,4 @@
-﻿// using GameScripts.Control;
-// using UnityEngine;
-// using TMPro;
-// using UnityEngine.UI;
-// using Model;
-// using UnityEngine.Serialization;
-//
-//
-// // update main menu of selction role UI information 
-// public class CharacterSelectManager : MonoBehaviour
-// {
-//     public Image portraitImage;
-//     public TextMeshProUGUI textName;
-//     public TextMeshProUGUI textHP;
-//     public TextMeshProUGUI textATK;
-//     public TextMeshProUGUI textSPEED;
-//     public TextMeshProUGUI textDescription;
-//
-//     private Hero selectedHero;
-//     
-//     public Animator portraitAnimator;
-//
-//     public RuntimeAnimatorController warriorController;
-//     public RuntimeAnimatorController thiefController;
-//     [FormerlySerializedAs("priestessController")] public RuntimeAnimatorController mageController;
-//
-//     public void SelectWarrior()
-//     {   
-//         Debug.Log("✅ Warrior selected!");
-//         selectedHero = new Warrior("Warrior");
-//         portraitAnimator.runtimeAnimatorController = warriorController;
-//
-//         UpdateHeroUI();
-//     }
-//     
-//     public void OnStartGameButtonPressed()
-//     {
-//         if (selectedHero == null)
-//         {
-//             Debug.LogWarning("⚠ 没有选中英雄！");
-//             return;
-//         }
-//         Debug.Log("🚀 开始游戏！");
-//     }
-//     
-//     public void SelectThief()
-//     {
-//         Debug.Log("✅ Thief selected!");
-//         selectedHero = new Thief("Thief");
-//         portraitAnimator.runtimeAnimatorController = thiefController;
-//         UpdateHeroUI();
-//     }
-//
-//     public void SelectPriestess()
-//     {   
-//         Debug.Log("✅ Mage selected!");
-//         selectedHero = new Mage("Mage");
-//         UpdateHeroUI();
-//         portraitAnimator.runtimeAnimatorController = mageController;
-//     }
-//
-//     private void UpdateHeroUI()
-//     {
-//         if (selectedHero == null)
-//         {  
-//             Debug.LogWarning("⚠ Hero is null!");
-//             return;
-//         }
-//         Debug.Log($" Hero Stats - HP: {selectedHero.HitPoints}, ATK: {selectedHero.DamageMin}-{selectedHero.DamageMax}, SPD: {selectedHero.AttackSpeed}");
-//         
-//         textName.text = selectedHero.Name;
-//         
-//         textHP.text = "HP: " + selectedHero.HitPoints;
-//         
-//         textATK.text = "ATK: " + selectedHero.DamageMin + " - " + selectedHero.DamageMax;
-//         
-//         textSPEED.text = "SPD: " + selectedHero.AttackSpeed;
-//         
-//         // textDescription.text = selectedHero.Description;
-//         
-//         // portraitImage.sprite = selectedHero.Portrait;
-//         
-//     }
-//
-//     public Hero GetSelectedHero()
-//     {
-//         return selectedHero;
-//     }
-//     
-//
-//     
-// }
-
-using Controller;
+﻿using Controller;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -116,6 +23,16 @@ public class CharacterSelectManager : MonoBehaviour
 
     private Hero selectedHero;
     private string selectedClass;
+    public Button confirmCharacterSelectionButton;
+    public Button confirmCharacterNameButton;
+
+    void Start()
+    {
+        nameInputField.onValueChanged.AddListener(delegate { UpdateConfirmButtonCharacterSelect(); });
+        UpdateConfirmButtonCharacterSelect(); // initialize state
+        nameInputField.onValueChanged.AddListener(delegate { UpdateCharacterNameInput(); });
+        UpdateCharacterNameInput();
+    }
 
     public void SelectWarrior()
     {
@@ -123,6 +40,7 @@ public class CharacterSelectManager : MonoBehaviour
         selectedClass = "Warrior";
         portraitAnimator.runtimeAnimatorController = warriorController;
         PreviewHero();
+        UpdateConfirmButtonCharacterSelect();
     }
 
     public void SelectThief()
@@ -131,6 +49,7 @@ public class CharacterSelectManager : MonoBehaviour
         selectedClass = "Thief";
         portraitAnimator.runtimeAnimatorController = thiefController;
         PreviewHero();
+        UpdateConfirmButtonCharacterSelect();
     }
 
     public void SelectMage()
@@ -139,6 +58,7 @@ public class CharacterSelectManager : MonoBehaviour
         selectedClass = "Mage";
         portraitAnimator.runtimeAnimatorController = mageController;
         PreviewHero();
+        UpdateConfirmButtonCharacterSelect();
     }
 
     private void PreviewHero()
@@ -167,9 +87,23 @@ public class CharacterSelectManager : MonoBehaviour
         // portraitImage.sprite = selectedHero.Portrait;
     }
 
+    private void UpdateConfirmButtonCharacterSelect()
+    {
+        bool classSelected = !string.IsNullOrEmpty(selectedClass);
+        confirmCharacterSelectionButton.interactable = classSelected;
+    }
+
+    private void UpdateCharacterNameInput()
+    {
+        string enteredName = nameInputField.text.Trim();
+        bool nameValid = !string.IsNullOrEmpty(enteredName);
+        confirmCharacterNameButton.interactable = nameValid;
+    }
+    
     // Called when user presses start and confirms name
     public void OnStartGameButtonPressed()
     {
+        UpdateCharacterNameInput();
         Debug.Log("🚨 OnStartGameButtonPressed called");
         if (string.IsNullOrEmpty(selectedClass))
         {
@@ -178,13 +112,15 @@ public class CharacterSelectManager : MonoBehaviour
         }
 
         string enteredName = nameInputField.text.Trim();
+        UpdateCharacterNameInput();
+        Debug.Log($"Entered Name: {enteredName}");
         if (string.IsNullOrEmpty(enteredName))
         {
             Debug.LogWarning("⚠ No name entered!");
             return;
         }
 
-        selectedHero = FinalizeHeroSelection(enteredName);
+        selectedHero = HeroFactory.CreateHero(selectedClass, enteredName);
         Debug.Log($"🚀 Starting game with: {selectedHero.Name} the {selectedClass}");
         GameController.Instance.SetHero(selectedHero);
         FindObjectOfType<UIManager>().OnStartGameClicked();
@@ -193,10 +129,10 @@ public class CharacterSelectManager : MonoBehaviour
     }
 
     // Finalize selection after player enters their name
-    public Hero FinalizeHeroSelection(string heroName)
-    {
-        return HeroFactory.CreateHero(selectedClass, heroName);
-    }
+    // public Hero FinalizeHeroSelection(string heroName)
+    // {
+    //     return HeroFactory.CreateHero(selectedClass, heroName);
+    // }
 
     // For UI or other systems to retrieve selected hero
     public Hero GetSelectedHero()

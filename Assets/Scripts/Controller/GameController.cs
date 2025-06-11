@@ -1,3 +1,5 @@
+using Unity.VisualScripting;
+
 namespace Controller
 {
     using Model;
@@ -13,6 +15,7 @@ namespace Controller
         public Hero CurrentHero { get; private set; }
 
         [Header("References")] public GameObject heroPrefab;
+        private GameObject persistentHero;
 
         private void Awake()
         {
@@ -40,14 +43,26 @@ namespace Controller
 
         private IEnumerator SpawnHeroAt(Vector2 position)
         {
+            GameObject heroObj;
             if (heroPrefab == null)
             {
                 Debug.LogError("Hero prefab not assigned!");
                 yield break;
             }
 
-            GameObject heroObj = Instantiate(heroPrefab, position, Quaternion.identity);
-            heroObj.name = "Hero";
+            if (persistentHero == null)
+            {
+                heroObj = Instantiate(heroPrefab, position, Quaternion.identity);
+                heroObj.name = $"{CurrentHero.Name}";
+
+                DontDestroyOnLoad(heroObj);
+                persistentHero = heroObj;
+            }
+            else
+            {
+                heroObj = persistentHero;
+                heroObj.transform.position = position;
+            }
 
             // Load hero stats
             CustomPlayer playerScript = heroObj.GetComponent<CustomPlayer>();
