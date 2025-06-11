@@ -136,7 +136,7 @@ public class EnemyEntityOBJ : MonoBehaviour
 
      if (col.CompareTag("Player"))
      {
-         var player = col.GetComponent<PlayerCharacter>();
+         var player = col.GetComponent<CustomPlayer>();
 
          if (player != null && player.ToString().Contains("Dead"))
          {

@@ -11460,7 +11460,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 7.5
+  orthographic size: 8.8125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -79238,11 +79238,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1874996267359487139, guid: a047418cfd51c465791130c9589ab229, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.29
+      value: 4.95
       objectReference: {fileID: 0}
     - target: {fileID: 1874996267359487139, guid: a047418cfd51c465791130c9589ab229, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 7.3
       objectReference: {fileID: 0}
     - target: {fileID: 1874996267359487139, guid: a047418cfd51c465791130c9589ab229, type: 3}
       propertyPath: m_LocalPosition.z
@@ -79284,6 +79284,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PillarManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2725965862898773732, guid: a047418cfd51c465791130c9589ab229, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2887159127728371771, guid: a047418cfd51c465791130c9589ab229, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -79291,6 +79295,18 @@ PrefabInstance:
     - target: {fileID: 2979779153704994672, guid: a047418cfd51c465791130c9589ab229, type: 3}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6250758196186178984, guid: a047418cfd51c465791130c9589ab229, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6963496303291250162, guid: a047418cfd51c465791130c9589ab229, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7226978028887508900, guid: a047418cfd51c465791130c9589ab229, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9219790507747374880, guid: a047418cfd51c465791130c9589ab229, type: 3}
       propertyPath: m_IsTrigger

@@ -14,7 +14,8 @@ namespace GameScripts.Control
         public PillarCollector PillarCollector { get; private set; }
 
         void Start()
-        {  DatabaseInitializer.Initialize();
+        {
+            DatabaseInitializer.Initialize();
             // // ⛔ avoid empty null 
             // if (DungeonAdventure.Instance == null || DungeonAdventure.Instance.SelectedHero == null)
             // {

@@ -1,23 +1,26 @@
 ﻿using System.Collections.Generic;
 using Model;
 
-public static class CharacterFactory
+namespace Model.JSON
 {
-    public static DungeonCharacter Create(CharacterSaveData data)
+    public static class CharacterFactory
     {
-        DungeonCharacter character = data.type switch
+        public static DungeonCharacter Create(CharacterSaveData data)
         {
-            "Knight" => new Knight(data.name),
-            "Ogre" => new Ogre(data.name),
-            _ => null
-        };
-        
-        if (data.name == "PlayerKnight" && data.collectedPillars != null)
-        {
-            PillarTracker.Instance.collectedPillars = new List<string>(data.collectedPillars);
-        }
+            DungeonCharacter character = data.type switch
+            {
+                "Knight" => new Warrior(data.name),
+                "Ogre" => new Ogre(data.name),
+                _ => null
+            };
 
-        character?.LoadFromSaveData(data);
-        return character;
+            if (data.name == "PlayerKnight" && data.collectedPillars != null)
+            {
+                PillarTracker.Instance.collectedPillars = new List<string>(data.collectedPillars);
+            }
+
+            character?.LoadFromSaveData(data);
+            return character;
+        }
     }
 }
