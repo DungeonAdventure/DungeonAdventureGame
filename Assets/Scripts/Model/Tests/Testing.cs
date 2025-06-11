@@ -48,10 +48,10 @@ public class Testing : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("=== KNIGHT CLASS TESTING ===");
+        Debug.Log("=== Warrior CLASS TESTING ===");
 
         // Create test subjects
-        Knight knight = new Knight("Sir Lancelot");
+        Warrior warrior = new Warrior("Sir Lancelot");
         TestMonster goblin = new TestMonster("Goblin Warrior");
 
         // Test 1: Display initial stats
@@ -64,7 +64,7 @@ public class Testing : MonoBehaviour
         for (int i = 1; i <= 5; i++)
         {
             Debug.Log($"Attack {i}:");
-            knight.Attack(goblin);
+            warrior.Attack(goblin);
             if (!goblin.IsAlive())
             {
                 Debug.Log("Goblin defeated!");
@@ -87,13 +87,13 @@ public class Testing : MonoBehaviour
 
         // Test 4: Test Knight taking damage and blocking
         Debug.Log("4. TESTING DAMAGE AND BLOCKING:");
-        knight = new Knight("Sir Galahad"); // Fresh knight
+        warrior = new Warrior("Sir Galahad"); // Fresh knight
         for (int i = 1; i <= 10; i++)
         {
             Debug.Log($"Damage test {i}:");
-            goblin.Attack(knight);
-            Debug.Log($"Knight HP: {knight.HitPoints}");
-            if (!knight.IsAlive())
+            goblin.Attack(warrior);
+            Debug.Log($"Knight HP: {warrior.HitPoints}");
+            if (!warrior.IsAlive())
             {
                 Debug.Log("Knight has fallen!");
                 break;
@@ -109,12 +109,12 @@ public class Testing : MonoBehaviour
         
         // Attack null target
         Debug.Log("Attacking null target:");
-        knight.Attack(null);
+        warrior.Attack(null);
         
         // Attack dead target
         goblin.SetHitPoints(0);
         Debug.Log("Attacking dead target:");
-        knight.Attack(goblin);
+        warrior.Attack(goblin);
         
         // Use special ability on null
         Debug.Log("Using special ability on null:");

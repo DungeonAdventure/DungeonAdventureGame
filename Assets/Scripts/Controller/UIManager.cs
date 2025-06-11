@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using GameScripts.Control;
 using UnityEngine.SceneManagement;
+using Unity.Cinemachine;
+using UnityEngine.SceneManagement;
+
 
 public class UIManager : MonoBehaviour
 {
