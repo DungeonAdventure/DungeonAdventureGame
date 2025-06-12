@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-using GameScripts.Control;
-using UnityEngine.SceneManagement;
-using Unity.Cinemachine;
+﻿using System.Collections;
+using Controller;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
@@ -65,10 +64,34 @@ public class UIManager : MonoBehaviour
         panelTopTabSettings.SetActive(false);
         
         if (SceneManager.sceneCount == 1) {
+     
             SceneManager.LoadScene("5thScenes", LoadSceneMode.Additive);
+            StartCoroutine(LoadSceneAndStartDialogue());
+        }
+        
+    }
+    
+    private IEnumerator LoadSceneAndStartDialogue()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("5thScenes", LoadSceneMode.Additive);
+
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        // ✅ Use the new Unity-recommended method
+        DialogueManager manager = Object.FindFirstObjectByType<DialogueManager>();
+        if (manager != null)
+        {
+            manager.BeginDialogue();
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found after scene load!");
         }
     }
 
+
+    
     // 显示英雄命名面板
     public void ShowHeroName(string heroName)
     {
