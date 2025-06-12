@@ -38,8 +38,8 @@ namespace Model {
         private void Start()
         {
             Debug.Log("Dungeon Start");
-            // availableScenes = new List<string> { "acobble_scene_00", "3rdCaveScenes", "4rdScenes", "3rdCaveScenes", "acobble_scene2", "LBTile", "Scene2", "VincentSecondScene", "VincentMainScene" };
-            availableScenes = new List<string> { "acobble_scene_00", "VincentMainScene" };
+            availableScenes = new List<string> { "acobble_scene_00", "3rdCaveScenes", "4rdScenes", "3rdCaveScenes", "acobble_scene2", "LBTile", "Scene2", "VincentSecondScene", "VincentMainScene" };
+            // availableScenes = new List<string> { "acobble_scene_00", "VincentMainScene" };
             if (grid == null)
             {
                 // 🔥 Initialize grid ONLY once

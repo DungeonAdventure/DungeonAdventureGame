@@ -73,10 +73,10 @@ public class UIManager : MonoBehaviour
     
     private IEnumerator LoadSceneAndStartDialogue()
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("5thScenes", LoadSceneMode.Additive);
-
-        while (!asyncLoad.isDone)
-            yield return null;
+        // AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("5thScenes", LoadSceneMode.Additive);
+        //
+        // while (!asyncLoad.isDone)
+        //     yield return null;
 
         // ✅ Use the new Unity-recommended method
         DialogueManager manager = Object.FindFirstObjectByType<DialogueManager>();
@@ -88,6 +88,8 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogWarning("DialogueManager not found after scene load!");
         }
+
+        return null;
     }
 
 
