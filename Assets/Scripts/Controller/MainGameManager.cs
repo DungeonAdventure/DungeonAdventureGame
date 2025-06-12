@@ -56,6 +56,19 @@ namespace GameScripts.Control
 
             PillarCollector = new PillarCollector(); // 💡 Initialize collector
         }
+        
+        public void OnExitGameClicked()
+        {
+            Debug.Log("❌ Exit button clicked. Quitting game...");
+
+            #if UNITY_EDITOR
+                        // 在 Unity 编辑器中运行时停止播放
+                        UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                        // 打包后退出游戏
+                        Application.Quit();
+            #endif
+        }
 
     }
 }

@@ -118,7 +118,6 @@ public class EnemyEntityOBJ : MonoBehaviour
  
  private void OnTriggerEnter2D(Collider2D collision)
  {
-     Debug.Log("FUCKKKK");
      if (collision.CompareTag("Attack") && canBeHit)
      {
          canBeHit = false;
