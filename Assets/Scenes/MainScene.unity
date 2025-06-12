@@ -238,7 +238,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 9.552083
+  orthographic size: 9.265625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -586,6 +586,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbfbe43eb63da4aa3b7fa27181e9b517, type: 3}
+--- !u!82 &1326549299 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 4132386226715317083, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+  m_PrefabInstance: {fileID: 4514568658076743939}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1343474506 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2152603433704898548, guid: f42a497d5b069ef4aae88a6cdadbbdf0, type: 3}
@@ -795,7 +800,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2095998891065806733, guid: f42a497d5b069ef4aae88a6cdadbbdf0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000009254916
+      value: 0.00039680704
       objectReference: {fileID: 0}
     - target: {fileID: 2152603433704898548, guid: f42a497d5b069ef4aae88a6cdadbbdf0, type: 3}
       propertyPath: mageController
@@ -1899,10 +1904,14 @@ PrefabInstance:
     - target: {fileID: 3411537968523406587, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1354239342}
+      objectReference: {fileID: 1417296778}
     - target: {fileID: 3411537968523406587, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnExitGameClicked
+      objectReference: {fileID: 0}
+    - target: {fileID: 3411537968523406587, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameScripts.Control.MainGameManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4320178646932080867, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1957,16 +1966,32 @@ PrefabInstance:
       value: -10.999786
       objectReference: {fileID: 0}
     - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1417296778}
+    - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1354239342}
+      objectReference: {fileID: 1326549299}
     - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnExitGameClicked
       objectReference: {fileID: 0}
     - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Play
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameScripts.Control.MainGameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: UIManager, Assembly-CSharp
+      value: UnityEngine.AudioSource, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5667249783587328896, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: winOrLoseText
