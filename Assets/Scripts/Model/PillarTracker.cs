@@ -56,7 +56,9 @@ namespace Model
                 if (collectedPillars.Count >= 4)
                 {
                     Debug.Log("🎉 YOU WIN!");
-                    // You could call a win method or load a scene here
+                    
+                    //call a win method or load a scene here
+                    MenuControler.Instance.ShowWin();
                 }
             }
         }
