@@ -115,14 +115,20 @@ public class EnemyEntityOBJ : MonoBehaviour
      }
  }
  
+ 
  private void OnTriggerEnter2D(Collider2D collision)
  {
+     Debug.Log("FUCKKKK");
      if (collision.CompareTag("Attack") && canBeHit)
      {
          canBeHit = false;
+         int playerDamage = collision.GetComponentInParent<CustomPlayer>()?.GetAttackDamage() ?? 15;
+         TakeDamage(playerDamage);
+         Debug.Log($"🩸 Enemy hit by player for {playerDamage} damage.");
          StartCoroutine(ResetHitCooldown());
      }
  }
+
 
  private IEnumerator ResetHitCooldown()
  {
