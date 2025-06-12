@@ -54939,6 +54939,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Monastery (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1213724182483703643, guid: 12c8c3635db13ce48843fcd37d588920, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7153085662702478671, guid: 12c8c3635db13ce48843fcd37d588920, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.17

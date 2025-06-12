@@ -9,7 +9,7 @@ public class RendererFader : MonoBehaviour
     private SpriteRenderer[] m_SpriteRenderers;
     private bool m_FadeOutEnabled = false;
 
-    private Character m_Interactor;
+    private Controller.Character m_Interactor;
     private int m_InitialSortOrder;
 
     private SpriteRenderer BackgroundObject => m_SpriteRenderers[0];
@@ -42,7 +42,7 @@ public class RendererFader : MonoBehaviour
     {
         if (m_FadeOutEnabled) return;
 
-        if (collision.TryGetComponent<Character>(out var character))
+        if (collision.TryGetComponent<Controller.Character>(out var character))
         {
             m_Interactor = character;
             m_InitialSortOrder = character.SpriteRenderer.sortingOrder;
@@ -54,7 +54,7 @@ public class RendererFader : MonoBehaviour
     {
         if (!m_FadeOutEnabled) return;
 
-        if (collision.TryGetComponent<Character>(out var character))
+        if (collision.TryGetComponent<Controller.Character>(out var character))
         {
             m_FadeOutEnabled = false;
         }
