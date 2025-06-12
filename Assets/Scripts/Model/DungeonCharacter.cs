@@ -1,5 +1,3 @@
-using Model.JSON;
-
 namespace Model
 {
     public abstract class DungeonCharacter
@@ -37,10 +35,5 @@ namespace Model
         public abstract void TakeDamage(int damage);
 
         public abstract bool IsAlive();
-        
-        public void LoadFromSaveData(CharacterSaveData data)
-        {
-            HitPoints = data.hitPoints;
-        }
     }
 }
