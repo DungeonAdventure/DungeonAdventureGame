@@ -26,10 +26,10 @@ public class RendererFader : MonoBehaviour
         {
             FadeOut();
 
-            if (BackgroundObjectAlpha == TRANSPARENT_ALPHA)
-            {
-                m_Interactor.SpriteRenderer.sortingOrder = BackgroundObject.sortingOrder - 1;
-            }
+            // if (BackgroundObjectAlpha == TRANSPARENT_ALPHA)
+            // {
+            //     m_Interactor.SpriteRenderer.sortingOrder = BackgroundObject.sortingOrder - 1;
+            // }
         }
         else if (!m_FadeOutEnabled && BackgroundObjectAlpha < VISIBLE_ALPHA)
         {

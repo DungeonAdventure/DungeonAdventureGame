@@ -324,6 +324,9 @@ public class CustomPlayer : MonoBehaviour
     private float minMovingSpeed = 0.1f;
     private int currentHealth;
     private int maxHealth = 100;
+    private int damageMin = 5;
+    private int damageMax = 15;
+
 
     private void Awake()
     {
@@ -425,6 +428,12 @@ public class CustomPlayer : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         attackPoint.SetActive(false);
     }
+    
+    public int GetAttackDamage()
+    {
+        return UnityEngine.Random.Range(damageMin, damageMax + 1);
+    }
+
 
     public bool IsRunning()
     {
@@ -439,6 +448,9 @@ public class CustomPlayer : MonoBehaviour
         attackCooldown = 1f / hero.AttackSpeed;
         maxHealth = hero.HitPoints;
         currentHealth = maxHealth;
+        
+        damageMin = hero.DamageMin;
+        damageMax = hero.DamageMax;
         // Optional: Update animation or visuals here
         // anim.runtimeAnimatorController = ...
     }

@@ -795,7 +795,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2095998891065806733, guid: f42a497d5b069ef4aae88a6cdadbbdf0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.0008419127
+      value: -0.000009254916
       objectReference: {fileID: 0}
     - target: {fileID: 2152603433704898548, guid: f42a497d5b069ef4aae88a6cdadbbdf0, type: 3}
       propertyPath: mageController
@@ -1848,6 +1848,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 658255925254986205, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 709993832341932125, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1882,6 +1886,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1235014473416980731, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1708822491235033359, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3406448443950516437, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
@@ -1947,6 +1955,18 @@ PrefabInstance:
     - target: {fileID: 4814589993282415134, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -10.999786
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1354239342}
+    - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnExitGameClicked
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074256614311505124, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: UIManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5667249783587328896, guid: 2a1e9feb4eec24de7be1e095de25eb27, type: 3}
       propertyPath: winOrLoseText
