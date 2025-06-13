@@ -3,10 +3,20 @@ using UnityEngine;
 using Controller;
 using Model;
 
+/// <summary>
+/// Manages saving and loading of the full game state, including player data,
+/// dungeon rooms, and collected pillars. Implements the Singleton pattern.
+/// </summary>
 public class GameSaveManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance of the GameSaveManager.
+    /// </summary>
     public static GameSaveManager Instance;
 
+    /// <summary>
+    /// Initializes the Singleton instance. Ensures persistence across scenes.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -21,28 +31,28 @@ public class GameSaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 保存整个游戏状态（玩家、房间、支柱等）
+    /// Saves the current game state including player info, pillars, and all rooms.
     /// </summary>
     public void SaveGame()
-    {   
+    {
         if (HeroStorage.Instance.SelectedHero == null)
         {
-            Debug.LogError("❌ HeroStorage.Instance.SelectedHero 是 null，请确保你已经选好了角色！");
+            Debug.LogError("❌ HeroStorage.Instance.SelectedHero is null. Please make sure a hero is selected!");
             return;
         }
 
         Vector2Int pos = Dungeon.Instance.playerPosition;
         Hero hero = HeroStorage.Instance.SelectedHero;
 
-        // ✅ 确保保存 HeroClass 前已调用 SetHero（设置 SavedHeroClass）
-        HeroStorage.Instance.SetHero(hero); // 🔥加上这一句！！
+        // Ensures the hero class is set before saving
+        HeroStorage.Instance.SetHero(hero);
 
         string heroClass = HeroStorage.Instance.SavedHeroClass;
 
-        // ▶︎ 保存玩家数据
+        // Save player data
         SaveSystem.SavePlayer(
             hero.Name,
-            heroClass, // ← 确保此时不为 null
+            heroClass,
             hero.HitPoints,
             pos.x,
             pos.y,
@@ -50,22 +60,21 @@ public class GameSaveManager : MonoBehaviour
             Dungeon.Instance.GetCurrentRoomScene()
         );
 
-        // ▶︎ 保存所有房间状态
+        // Save all room data
         SaveAllRooms();
 
         Debug.Log("✅ Game saved successfully.");
     }
 
-
     /// <summary>
-    /// 加载整个游戏状态（玩家、房间、支柱等）
+    /// Loads the saved game state, including the player, dungeon, pillars, and current scene.
     /// </summary>
     public void LoadGame()
     {
-        // ▶︎ 加载玩家数据（含 HeroClass）
+        // Load player data
         SaveSystem.LoadPlayer(
             out string name,
-            out string heroClass, // ← 新增字段
+            out string heroClass,
             out int hitpoints,
             out int x,
             out int y,
@@ -73,7 +82,7 @@ public class GameSaveManager : MonoBehaviour
             out string scene
         );
 
-        // ▶︎ 还原英雄（根据 class 创建新实例）
+        // Reconstruct hero from saved class
         Hero hero = HeroFactory.CreateHero(heroClass, name);
         if (hero == null)
         {
@@ -83,10 +92,12 @@ public class GameSaveManager : MonoBehaviour
 
         hero.hitpoints = hitpoints;
         HeroStorage.Instance.SetHero(hero);
-        HeroStorage.Instance.SavedHeroClass = heroClass; // ← 重新保存（确保一致）
-        // ✅ 你缺少这一步，必须补上
+        HeroStorage.Instance.SavedHeroClass = heroClass;
+
+        // Assign hero to the game controller
         GameController.Instance.SetHero(hero);
-        // ▶︎ 还原支柱信息
+
+        // Restore collected pillars
         PillarTracker.Instance.collectedPillars.Clear();
         foreach (string p in pillars.Split(','))
         {
@@ -94,24 +105,25 @@ public class GameSaveManager : MonoBehaviour
                 PillarTracker.Instance.Collect(p);
         }
 
-        // ▶︎ 还原地图房间
+        // Restore rooms
         Dungeon.Instance.RestoreRooms(SaveSystem.LoadRooms());
 
-        // ▶︎ 设置玩家回到原来坐标
+        // Set player position
         Dungeon.Instance.SetPlayerPosition(new Vector2Int(x, y));
 
-        // ▶︎ 切换到正确场景
+        // Load the scene the player was in
         SceneTransitionManager.Instance.LoadSceneAtPosition(scene, new Vector2Int(x, y));
 
         Debug.Log("✅ Game loaded successfully.");
     }
 
     /// <summary>
-    /// 保存所有房间的坐标、场景名和访问状态
+    /// Saves all rooms' data including position, scene name, and visited state.
     /// </summary>
     private void SaveAllRooms()
     {
-        SaveSystem.ClearRooms(); // ✅ 清除旧房间数据
+        // Clear existing saved room data
+        SaveSystem.ClearRooms();
 
         Dungeon dm = Dungeon.Instance;
         if (dm.grid == null) return;
@@ -123,7 +135,6 @@ public class GameSaveManager : MonoBehaviour
                 Room room = dm.grid[x, y];
                 if (room != null)
                 {
-                    // ✅ 保存房间的访问状态 visited
                     SaveSystem.SaveRoom(room.gridPosition, room.sceneName, room.visited);
                 }
             }

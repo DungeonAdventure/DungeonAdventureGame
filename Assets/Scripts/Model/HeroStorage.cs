@@ -2,18 +2,29 @@
 using UnityEngine;
 
 /// <summary>
-/// 用于管理当前选择的英雄，包括跨场景持久化，以及记录英雄类名（HeroClass）。
+/// Manages the currently selected hero, supporting cross-scene persistence
+/// and storing the hero's class name (HeroClass) for later reconstruction.
 /// </summary>
 public class HeroStorage : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance of the HeroStorage.
+    /// </summary>
     public static HeroStorage Instance;
 
-    /// <summary>当前已选英雄实例</summary>
+    /// <summary>
+    /// The currently selected hero instance.
+    /// </summary>
     public Hero SelectedHero { get; private set; }
 
-    /// <summary>保存的英雄类名（如 "Warrior", "Thief", "Priestess"）用于重新加载</summary>
+    /// <summary>
+    /// The saved hero class name (e.g., "Warrior", "Thief", "Priestess") used for save/load.
+    /// </summary>
     public string SavedHeroClass { get; internal set; }
 
+    /// <summary>
+    /// Unity Awake callback. Initializes the singleton and enables persistence between scenes.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -28,15 +39,14 @@ public class HeroStorage : MonoBehaviour
     }
 
     /// <summary>
-    /// 设置当前英雄，并保存对应的英雄类名（用于存档重建）
+    /// Sets the current hero and records the corresponding hero class name for use in save/load systems.
     /// </summary>
+    /// <param name="hero">The hero instance to store.</param>
     public void SetHero(Hero hero)
     {
         SelectedHero = hero;
-        SavedHeroClass = hero.GetType().Name;  // 例如：Warrior、Thief、Priestess
-        
-        Debug.Log($"✅ 已保存英雄：{hero.Name}，类型：{SavedHeroClass}");
-    }
-    
+        SavedHeroClass = hero.GetType().Name;  // e.g., Warrior, Thief, Priestess
 
+        Debug.Log($"✅ Hero saved: {hero.Name}, Class: {SavedHeroClass}");
+    }
 }

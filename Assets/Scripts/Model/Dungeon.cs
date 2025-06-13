@@ -4,13 +4,26 @@ using Controller;
 using UnityEngine;
 
 namespace Model {
+    /// <summary>
+    /// Represents the main dungeon system that manages rooms, player position, and scene transitions.
+    /// </summary>
     public class Dungeon : MonoBehaviour {
+        /// <summary> Width of the dungeon grid. </summary>
         public int width = 4;
+
+        /// <summary> Height of the dungeon grid. </summary>
         public int height = 3;
+
+        /// <summary> 2D grid representing all rooms in the dungeon. </summary>
         public Room[,] grid;
+
+        /// <summary> The player's current position in the dungeon grid. </summary>
         public Vector2Int playerPosition;
+
+        /// <summary> Singleton instance of the Dungeon. </summary>
         public static Dungeon Instance;
 
+        /// <summary> List of scenes available for room generation. </summary>
         public List<string> availableScenes = new List<string> { "5thScenes", "acobble_scene_00", "VincentMainScene" };
 
         private List<string> availablePillars = new List<string>
@@ -19,29 +32,31 @@ namespace Model {
         private HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         private List<Vector2Int> pillarPositions = new List<Vector2Int>();
 
-        private void Awake()
-        {
+        /// <summary>
+        /// Initializes the singleton instance and ensures persistence across scenes.
+        /// </summary>
+        private void Awake() {
             Debug.Log("Dungeon Awake");
             DontDestroyOnLoad(gameObject);
-            if (Instance == null)
-            {
+            if (Instance == null) {
                 Instance = this;
-            }
-            else
-            {
+            } else {
                 Debug.Log("Duplicate Dungeon found - destroying.");
                 Destroy(gameObject);
             }
         }
 
-        private void Start()
-        {
+        /// <summary>
+        /// Initializes the dungeon grid and player starting position. Also sets pillar positions and validates scenes.
+        /// </summary>
+        private void Start() {
             Debug.Log("Dungeon Start");
-            availableScenes = new List<string> { "acobble_scene_00", "3rdCaveScenes", "4rdScenes", "3rdCaveScenes", "acobble_scene2", "LBTile", "Scene2", "VincentSecondScene", "VincentMainScene" };
-            // availableScenes = new List<string> { "acobble_scene_00", "VincentMainScene" };
-            if (grid == null)
-            {
-                // 🔥 Initialize grid ONLY once
+            availableScenes = new List<string> {
+                "acobble_scene_00", "3rdCaveScenes", "4rdScenes", "3rdCaveScenes",
+                "acobble_scene2", "LBTile", "Scene2", "VincentSecondScene", "VincentMainScene"
+            };
+
+            if (grid == null) {
                 grid = new Room[width, height];
                 ValidateScenes();
                 Vector2Int startPos = new Vector2Int(0, 0);
@@ -52,64 +67,57 @@ namespace Model {
                 PreAssignPillars();
             }
 
-            // 🔥 Update player position if we’re returning from a transition
             if (SceneTransitionManager.Instance != null &&
-                SceneTransitionManager.Instance.nextPlayerPosition != Vector2Int.zero)
-            {
+                SceneTransitionManager.Instance.nextPlayerPosition != Vector2Int.zero) {
                 playerPosition = SceneTransitionManager.Instance.nextPlayerPosition;
             }
 
             PrintPlayerStatus();
         }
 
-        private void ValidateScenes()
-        {
+        /// <summary>
+        /// Validates that all available scenes are included in the build settings.
+        /// </summary>
+        private void ValidateScenes() {
             var validScenes = new HashSet<string>();
-            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings; i++)
-            {
+            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings; i++) {
                 string path = UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(i);
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
                 validScenes.Add(sceneName);
             }
 
-            foreach (var scene in availableScenes)
-            {
-                if (!validScenes.Contains(scene))
-                {
+            foreach (var scene in availableScenes) {
+                if (!validScenes.Contains(scene)) {
                     Debug.LogError($"Dungeon: Scene '{scene}' is not in Build Settings!");
                 }
             }
         }
 
-        public Room GenerateRoom(Vector2Int pos, bool isStartingRoom = false)
-        {
+        /// <summary>
+        /// Generates a room at a specified position in the dungeon.
+        /// </summary>
+        /// <param name="pos">The grid position to generate the room at.</param>
+        /// <param name="isStartingRoom">Whether this room is the starting room.</param>
+        /// <returns>The generated Room object.</returns>
+        public Room GenerateRoom(Vector2Int pos, bool isStartingRoom = false) {
             string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             if (!isStartingRoom) Debug.Log($"Generating room at {pos.x}, {pos.y}, scene: {currentSceneName}");
 
             string selectedScene;
-
-            // 🔥 For the starting room (0,0), use the current active scene
-            if (isStartingRoom || pos == new Vector2Int(0, 0))
-            {
+            if (isStartingRoom || pos == new Vector2Int(0, 0)) {
                 selectedScene = "5thScenes";
-            }
-            else
-            {
-                // Filter available scenes to exclude current scene
+            } else {
                 List<string> filteredScenes = availableScenes.FindAll(scene => scene != currentSceneName);
                 selectedScene = filteredScenes.Count > 0
                     ? filteredScenes[Random.Range(0, filteredScenes.Count)]
                     : currentSceneName;
             }
 
-            Room room = new Room(pos); // Updated Room to store grid position
+            Room room = new Room(pos);
             room.sceneName = selectedScene;
-            room.visited = false; // ✅ 明确初始化房间为未访问
-            
-            
-            // Check if this position has a preassigned pillar
-            if (pillarPositions.Contains(pos))
-            {
+            room.visited = false;
+
+            if (pillarPositions.Contains(pos)) {
                 room.hasPillar = true;
                 int index = pillarPositions.IndexOf(pos);
                 string[] pillarTypes = { "Abstraction", "Encapsulation", "Inheritance", "Polymorphism" };
@@ -120,266 +128,164 @@ namespace Model {
             return room;
         }
 
-        public Room GetRoom(Vector2Int pos)
-        {
+        /// <summary>
+        /// Retrieves the room at a specified position in the dungeon grid.
+        /// </summary>
+        /// <param name="pos">The position to look up.</param>
+        /// <returns>The Room at the position, or null if out of bounds.</returns>
+        public Room GetRoom(Vector2Int pos) {
             if (pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height)
                 return grid[pos.x, pos.y];
             return null;
         }
 
-        //  Updated to use linear allocation 
-        // public Vector2Int GetOrCreateRoomFromExit(Vector2Int currentPos, string exitDirection)
-        // {
-        //     Room currentRoom = GetRoom(currentPos);
-        //     if (currentRoom == null) return currentPos;
-        //     // string oppositeDirection = GetOppositeDirection(exitDirection);
-        //     if (currentRoom.usedExits.ContainsKey(exitDirection))
-        //     {
-        //         // Already mapped, return destination
-        //         return currentRoom.usedExits[exitDirection];
-        //     }
-        //
-        //     // 🔥 Use linear allocation 🔥
-        //     // Debug.Log($"UsedExit contained this key: {exitDirection} \t" +
-        //     //           $"When we needed this key: {string.Join(", ", currentRoom.usedExits.Keys)}");
-        //     Vector2Int newPos = FindNextLinearPosition();
-        //
-        //     if (newPos == currentPos)
-        //     {
-        //         Debug.LogWarning("No available positions left! Returning current position.");
-        //         return currentPos;
-        //     }
-        //
-        //     Room newRoom = GenerateRoom(newPos);
-        //     currentRoom.usedExits[exitDirection] = newPos;
-        //     newRoom.usedExits[exitDirection] = currentPos;
-        //     
-        //     Debug.Log($"🆕 生成新房间: {newPos}（方向: {exitDirection}）");
-        //     visited.Add(newPos);
-        //     playerPosition = newPos; // Update player's position here!
-        //     // newRoom.usedExits[GetOppositeDirection(exitDirection)] = currentPos;
-        //     return newPos;
-        // }
-        
-        public Vector2Int GetOrCreateRoomFromExit(Vector2Int currentPos, string exitDirection)
-        {
+        /// <summary>
+        /// Gets or generates a new room based on exit direction from the current position.
+        /// </summary>
+        /// <param name="currentPos">Current position of the player.</param>
+        /// <param name="exitDirection">Direction player is exiting from.</param>
+        /// <returns>Position of the newly created or existing room.</returns>
+        public Vector2Int GetOrCreateRoomFromExit(Vector2Int currentPos, string exitDirection) {
             Room currentRoom = GetRoom(currentPos);
-            if (currentRoom == null)
-            {
-                Debug.LogError($"❌ current room is empty (当前房间为空)，Location (坐标): {currentPos}，Direction (方向): {exitDirection}");
+            if (currentRoom == null) {
+                Debug.LogError($"Room not found at position {currentPos}, direction: {exitDirection}");
                 return currentPos;
             }
 
-            if (currentRoom.usedExits.ContainsKey(exitDirection))
-            {
-                Vector2Int destination = currentRoom.usedExits[exitDirection];
-                Debug.Log($"🔁 方向 direction [{exitDirection}] exits (已存在)，From (从) ({currentPos.x}, {currentPos.y}) move to old room  (移动到旧房间): ({destination.x}, {destination.y})");
-                return destination;
+            if (currentRoom.usedExits.ContainsKey(exitDirection)) {
+                return currentRoom.usedExits[exitDirection];
             }
 
             Vector2Int newPos = FindNextLinearPosition();
+            if (newPos == currentPos) return currentPos;
 
-            if (newPos == currentPos)
-            {
-                Debug.LogWarning("❌ Ran out of room, return current room (没有空房间位置了，返回当前房间)。");
-                return currentPos;
-            }
-
-            // ✅ 创建新房间并记录双向出口
             Room newRoom = GenerateRoom(newPos);
             currentRoom.usedExits[exitDirection] = newPos;
             newRoom.usedExits[exitDirection] = currentPos;
 
-            // ✅ 更新地图状态
             visited.Add(newPos);
             playerPosition = newPos;
-
-            Debug.Log($"🆕 new room made successful : location({newPos.x}, {newPos.y})，direction: {exitDirection}，new room name: {newRoom.sceneName}");
-
             return newPos;
         }
 
-        public void PrintPlayerStatus()
-        {
+        /// <summary>
+        /// Logs the player's current status, including room, scene, and visited rooms.
+        /// </summary>
+        public void PrintPlayerStatus() {
             Debug.Log($"Dungeon.Instance == null? {Dungeon.Instance == null}");
             Room currentRoom = GetRoom(playerPosition);
-            if (currentRoom != null)
-            {
+            if (currentRoom != null) {
                 string keysStr = string.Join(", ", currentRoom.usedExits.Keys);
                 string valuesStr = string.Join(", ", currentRoom.usedExits.Values.Select(v => $"({v.x},{v.y})"));
-                Debug.Log($"Player is in position {playerPosition} " +
-                          $"| Scene: {currentRoom.sceneName} " +
-                          $"| Has Pillar: {currentRoom.hasPillar} " +
-                          $"| Pillar Type: {currentRoom.pillarType}" +
-                          $"| Visited: {keysStr}" +
-                          $"| Exits: {valuesStr}");
-            }
-            else
-            {
+                Debug.Log($"Player is in position {playerPosition} | Scene: {currentRoom.sceneName} | Has Pillar: {currentRoom.hasPillar} | Pillar Type: {currentRoom.pillarType} | Visited: {keysStr} | Exits: {valuesStr}");
+            } else {
                 Debug.Log($"Player is in position {playerPosition}, but the room is not generated yet.");
             }
 
-            if (visited != null && visited.Count > 0)
-            {
-                string visitedStr = string.Join(", ", visited);
-                Debug.Log($"Visited positions: {visitedStr}");
-            }
-            else
-            {
-                Debug.Log("Visited positions: (none)");
-            }
+            string visitedStr = visited.Count > 0 ? string.Join(", ", visited) : "(none)";
+            Debug.Log($"Visited positions: {visitedStr}");
         }
 
-        //  Replaces FindNextAvailableAdjacentPosition with linear scan 
-        private Vector2Int FindNextLinearPosition()
-        {
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (grid[x, y] == null)
-                    {
+        /// <summary>
+        /// Finds the next available position in the grid using a linear scan.
+        /// </summary>
+        /// <returns>The next available position, or current player position if full.</returns>
+        private Vector2Int FindNextLinearPosition() {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    if (grid[x, y] == null) {
                         return new Vector2Int(x, y);
                     }
                 }
             }
 
             Debug.LogWarning("No more available positions!");
-            return playerPosition; // fallback if grid is full
+            return playerPosition;
         }
 
-        // private bool IsPositionValid(Vector2Int pos) {
-        //     return pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height;
-        // }
-
-        // private string GetOppositeDirection(string dir) {
-        //     switch (dir) {
-        //         case "Left": return "Right";
-        //         case "Right": return "Left";
-        //         case "Top": return "Bottom";
-        //         case "Bottom": return "Top";
-        //         default: return "";
-        //     }
-        // }
-
-        public void PreAssignPillars()
-        {
+        /// <summary>
+        /// Pre-assigns the four Pillars of OOP to random unique positions in the grid (excluding entrance).
+        /// </summary>
+        public void PreAssignPillars() {
             List<Vector2Int> availablePositions = new List<Vector2Int>();
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
                     Vector2Int pos = new Vector2Int(x, y);
-                    if (pos != new Vector2Int(0, 0))
-                    {
-                        // Exclude (0,0)
-                        availablePositions.Add(pos);
-                    }
+                    if (pos != new Vector2Int(0, 0)) availablePositions.Add(pos);
                 }
             }
 
-            // Shuffle and pick first 4 for pillar positions
-            for (int i = 0; i < 4; i++)
-            {
+            for (int i = 0; i < 4; i++) {
                 int randIndex = Random.Range(0, availablePositions.Count);
                 Vector2Int pos = availablePositions[randIndex];
-                availablePositions.RemoveAt(randIndex); // Ensure unique
+                availablePositions.RemoveAt(randIndex);
                 pillarPositions.Add(pos);
             }
 
             Debug.Log("Pillar positions preassigned:");
-            foreach (var pos in pillarPositions)
-            {
+            foreach (var pos in pillarPositions) {
                 Debug.Log($"Pillar at {pos}");
             }
         }
-        
-        
-        /// ✅ 新增：设置当前房间为已访问
-        public void MarkCurrentRoomVisited()
-        {
+
+        /// <summary>
+        /// Marks the current room as visited by the player.
+        /// </summary>
+        public void MarkCurrentRoomVisited() {
             var room = GetRoom(playerPosition);
             if (room != null) room.visited = true;
         }
-        
+
         /// <summary>
-        /// Update the player's grid position (used when loading a save).
+        /// Sets the player's position in the dungeon (used during loading).
         /// </summary>
-        public void SetPlayerPosition(Vector2Int pos)
-        {
+        /// <param name="pos">The new player position.</param>
+        public void SetPlayerPosition(Vector2Int pos) {
             playerPosition = pos;
         }
-        
+
         /// <summary>
-        /// Returns the scene name for the room at the player's current position.
+        /// Gets the name of the scene for the current room.
         /// </summary>
-        public string GetCurrentRoomScene()
-        {
+        /// <returns>Scene name, or empty if no room exists.</returns>
+        public string GetCurrentRoomScene() {
             Room room = GetRoom(playerPosition);
             return room != null ? room.sceneName : string.Empty;
         }
-        
-        
-        public void SaveAllRooms()
-        {
+
+        /// <summary>
+        /// Saves the state of all generated rooms using SaveSystem.
+        /// </summary>
+        public void SaveAllRooms() {
             if (grid == null) return;
             for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-            {
-                var room = grid[x,y];
+            for (int y = 0; y < height; y++) {
+                var room = grid[x, y];
                 if (room != null)
-                    SaveSystem.SaveRoom(
-                        room.gridPosition,
-                        room.sceneName,
-                        room.visited    // ← pass visited now
-                    );
+                    SaveSystem.SaveRoom(room.gridPosition, room.sceneName, room.visited);
             }
             Debug.Log("📦 All rooms saved.");
         }
 
-        // public void RestoreRooms(List<RoomData> loadedRooms)
-        // {
-        //     grid = new Room[width, height];
-        //     foreach (var data in loadedRooms)
-        //     {
-        //         var pos  = new Vector2Int(data.X, data.Y);
-        //         var room = new Room(pos) {
-        //             sceneName = data.SceneName,
-        //             visited   = data.Visited    // ← restore visited flag
-        //         };
-        //         grid[pos.x, pos.y] = room;
-        //
-        //         // If you want to re-open every visited scene additively:
-        //         if (data.Visited)
-        //             UnityEngine.SceneManagement.SceneManager.LoadScene(
-        //                 data.SceneName,
-        //                 UnityEngine.SceneManagement.LoadSceneMode.Additive
-        //             );
-        //     }
-        //     Debug.Log($"🧱 Restored {loadedRooms.Count} rooms (with visited states).");
-        // }
-        public void RestoreRooms(List<RoomData> loadedRooms)
-        {
+        /// <summary>
+        /// Restores room data from a saved list of RoomData.
+        /// </summary>
+        /// <param name="loadedRooms">List of rooms loaded from a saved game file.</param>
+        public void RestoreRooms(List<RoomData> loadedRooms) {
             grid = new Room[width, height];
             Debug.Log($"🧱 开始还原房间，总数: {loadedRooms.Count}");
 
-            foreach (var data in loadedRooms)
-            {
-                var pos  = new Vector2Int(data.X, data.Y);
-                var room = new Room(pos)
-                {
+            foreach (var data in loadedRooms) {
+                var pos = new Vector2Int(data.X, data.Y);
+                var room = new Room(pos) {
                     sceneName = data.SceneName,
-                    visited   = data.Visited
+                    visited = data.Visited
                 };
                 grid[pos.x, pos.y] = room;
 
-                // 日志显示每个房间的恢复情况
                 Debug.Log($"🧩 房间坐标: ({pos.x}, {pos.y}) | 场景: {data.SceneName} | 已访问: {data.Visited}");
 
-                // 如果房间已访问，则重新加载该场景
-                if (data.Visited)
-                {
+                if (data.Visited) {
                     Debug.Log($"🎬 当前加载场景: {data.SceneName}");
                     UnityEngine.SceneManagement.SceneManager.LoadScene(
                         data.SceneName,
@@ -391,13 +297,12 @@ namespace Model {
             Debug.Log($"✅ 房间还原完成，共加载 {loadedRooms.Count} 个房间。");
         }
 
-
-        public string GetCurrentSceneName()
-        {
+        /// <summary>
+        /// Gets the name of the currently active Unity scene.
+        /// </summary>
+        /// <returns>The name of the current active scene.</returns>
+        public string GetCurrentSceneName() {
             return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         }
-        
-        
     }
 }
-
