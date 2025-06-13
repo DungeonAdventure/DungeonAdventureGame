@@ -9,7 +9,11 @@ namespace Model
     /// </summary>
     [System.Serializable]
     public class Room
-    {
+    {   
+        
+        //NEW STUFF
+        public bool visited;
+        
         // Flags to mark this room as an entrance or exit
         public bool isEntrance;
         public bool isExit;

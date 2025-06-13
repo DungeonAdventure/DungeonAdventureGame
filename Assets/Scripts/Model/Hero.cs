@@ -64,11 +64,14 @@ namespace Model
 {
     public abstract class Hero : DungeonCharacter
     {
+        
         public Sprite Portrait { get; protected set; }
         public string Description { get; protected set; }
-
+        
         public int MaxHitPoints { get; protected set; }
-
+        
+        public int hitpoints { get; set; }
+        
         protected Hero(string name, int hitPoints, int damageMin, int damageMax,
             float attackSpeed, float moveSpeed, float chanceToCrit)
             : base(name, hitPoints, damageMin, damageMax, attackSpeed, moveSpeed, chanceToCrit)
@@ -104,5 +107,6 @@ namespace Model
         {
             Debug.Log($"{Name} has no special ability.");
         }
+
     }
 }

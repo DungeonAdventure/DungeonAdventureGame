@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Controller;
-using Model;
 using UnityEngine;
 
 namespace Model {
     public class Dungeon : MonoBehaviour {
-        public int width = 2;
+        public int width = 4;
         public int height = 3;
         public Room[,] grid;
         public Vector2Int playerPosition;
@@ -105,7 +104,9 @@ namespace Model {
 
             Room room = new Room(pos); // Updated Room to store grid position
             room.sceneName = selectedScene;
-
+            room.visited = false; // ✅ 明确初始化房间为未访问
+            
+            
             // Check if this position has a preassigned pillar
             if (pillarPositions.Contains(pos))
             {
@@ -127,35 +128,74 @@ namespace Model {
         }
 
         //  Updated to use linear allocation 
+        // public Vector2Int GetOrCreateRoomFromExit(Vector2Int currentPos, string exitDirection)
+        // {
+        //     Room currentRoom = GetRoom(currentPos);
+        //     if (currentRoom == null) return currentPos;
+        //     // string oppositeDirection = GetOppositeDirection(exitDirection);
+        //     if (currentRoom.usedExits.ContainsKey(exitDirection))
+        //     {
+        //         // Already mapped, return destination
+        //         return currentRoom.usedExits[exitDirection];
+        //     }
+        //
+        //     // 🔥 Use linear allocation 🔥
+        //     // Debug.Log($"UsedExit contained this key: {exitDirection} \t" +
+        //     //           $"When we needed this key: {string.Join(", ", currentRoom.usedExits.Keys)}");
+        //     Vector2Int newPos = FindNextLinearPosition();
+        //
+        //     if (newPos == currentPos)
+        //     {
+        //         Debug.LogWarning("No available positions left! Returning current position.");
+        //         return currentPos;
+        //     }
+        //
+        //     Room newRoom = GenerateRoom(newPos);
+        //     currentRoom.usedExits[exitDirection] = newPos;
+        //     newRoom.usedExits[exitDirection] = currentPos;
+        //     
+        //     Debug.Log($"🆕 生成新房间: {newPos}（方向: {exitDirection}）");
+        //     visited.Add(newPos);
+        //     playerPosition = newPos; // Update player's position here!
+        //     // newRoom.usedExits[GetOppositeDirection(exitDirection)] = currentPos;
+        //     return newPos;
+        // }
+        
         public Vector2Int GetOrCreateRoomFromExit(Vector2Int currentPos, string exitDirection)
         {
             Room currentRoom = GetRoom(currentPos);
-            if (currentRoom == null) return currentPos;
-            // string oppositeDirection = GetOppositeDirection(exitDirection);
-            if (currentRoom.usedExits.ContainsKey(exitDirection))
+            if (currentRoom == null)
             {
-                // Already mapped, return destination
-                return currentRoom.usedExits[exitDirection];
+                Debug.LogError($"❌ current room is empty (当前房间为空)，Location (坐标): {currentPos}，Direction (方向): {exitDirection}");
+                return currentPos;
             }
 
-            // 🔥 Use linear allocation 🔥
-            // Debug.Log($"UsedExit contained this key: {exitDirection} \t" +
-            //           $"When we needed this key: {string.Join(", ", currentRoom.usedExits.Keys)}");
+            if (currentRoom.usedExits.ContainsKey(exitDirection))
+            {
+                Vector2Int destination = currentRoom.usedExits[exitDirection];
+                Debug.Log($"🔁 方向 direction [{exitDirection}] exits (已存在)，From (从) ({currentPos.x}, {currentPos.y}) move to old room  (移动到旧房间): ({destination.x}, {destination.y})");
+                return destination;
+            }
+
             Vector2Int newPos = FindNextLinearPosition();
 
             if (newPos == currentPos)
             {
-                Debug.LogWarning("No available positions left! Returning current position.");
+                Debug.LogWarning("❌ Ran out of room, return current room (没有空房间位置了，返回当前房间)。");
                 return currentPos;
             }
 
+            // ✅ 创建新房间并记录双向出口
             Room newRoom = GenerateRoom(newPos);
             currentRoom.usedExits[exitDirection] = newPos;
             newRoom.usedExits[exitDirection] = currentPos;
 
+            // ✅ 更新地图状态
             visited.Add(newPos);
-            playerPosition = newPos; // Update player's position here!
-            // newRoom.usedExits[GetOppositeDirection(exitDirection)] = currentPos;
+            playerPosition = newPos;
+
+            Debug.Log($"🆕 new room made successful : location({newPos.x}, {newPos.y})，direction: {exitDirection}，new room name: {newRoom.sceneName}");
+
             return newPos;
         }
 
@@ -254,6 +294,110 @@ namespace Model {
                 Debug.Log($"Pillar at {pos}");
             }
         }
+        
+        
+        /// ✅ 新增：设置当前房间为已访问
+        public void MarkCurrentRoomVisited()
+        {
+            var room = GetRoom(playerPosition);
+            if (room != null) room.visited = true;
+        }
+        
+        /// <summary>
+        /// Update the player's grid position (used when loading a save).
+        /// </summary>
+        public void SetPlayerPosition(Vector2Int pos)
+        {
+            playerPosition = pos;
+        }
+        
+        /// <summary>
+        /// Returns the scene name for the room at the player's current position.
+        /// </summary>
+        public string GetCurrentRoomScene()
+        {
+            Room room = GetRoom(playerPosition);
+            return room != null ? room.sceneName : string.Empty;
+        }
+        
+        
+        public void SaveAllRooms()
+        {
+            if (grid == null) return;
+            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+            {
+                var room = grid[x,y];
+                if (room != null)
+                    SaveSystem.SaveRoom(
+                        room.gridPosition,
+                        room.sceneName,
+                        room.visited    // ← pass visited now
+                    );
+            }
+            Debug.Log("📦 All rooms saved.");
+        }
+
+        // public void RestoreRooms(List<RoomData> loadedRooms)
+        // {
+        //     grid = new Room[width, height];
+        //     foreach (var data in loadedRooms)
+        //     {
+        //         var pos  = new Vector2Int(data.X, data.Y);
+        //         var room = new Room(pos) {
+        //             sceneName = data.SceneName,
+        //             visited   = data.Visited    // ← restore visited flag
+        //         };
+        //         grid[pos.x, pos.y] = room;
+        //
+        //         // If you want to re-open every visited scene additively:
+        //         if (data.Visited)
+        //             UnityEngine.SceneManagement.SceneManager.LoadScene(
+        //                 data.SceneName,
+        //                 UnityEngine.SceneManagement.LoadSceneMode.Additive
+        //             );
+        //     }
+        //     Debug.Log($"🧱 Restored {loadedRooms.Count} rooms (with visited states).");
+        // }
+        public void RestoreRooms(List<RoomData> loadedRooms)
+        {
+            grid = new Room[width, height];
+            Debug.Log($"🧱 开始还原房间，总数: {loadedRooms.Count}");
+
+            foreach (var data in loadedRooms)
+            {
+                var pos  = new Vector2Int(data.X, data.Y);
+                var room = new Room(pos)
+                {
+                    sceneName = data.SceneName,
+                    visited   = data.Visited
+                };
+                grid[pos.x, pos.y] = room;
+
+                // 日志显示每个房间的恢复情况
+                Debug.Log($"🧩 房间坐标: ({pos.x}, {pos.y}) | 场景: {data.SceneName} | 已访问: {data.Visited}");
+
+                // 如果房间已访问，则重新加载该场景
+                if (data.Visited)
+                {
+                    Debug.Log($"🎬 当前加载场景: {data.SceneName}");
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(
+                        data.SceneName,
+                        UnityEngine.SceneManagement.LoadSceneMode.Additive
+                    );
+                }
+            }
+
+            Debug.Log($"✅ 房间还原完成，共加载 {loadedRooms.Count} 个房间。");
+        }
+
+
+        public string GetCurrentSceneName()
+        {
+            return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        }
+        
+        
     }
 }
 

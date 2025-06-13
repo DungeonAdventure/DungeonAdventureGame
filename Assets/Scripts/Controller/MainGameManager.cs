@@ -15,7 +15,9 @@ namespace GameScripts.Control
 
         void Start()
         {
-            DatabaseInitializer.Initialize();
+            SaveSystem.InitializeDatabase();
+
+            
             // // ⛔ avoid empty null 
             // if (DungeonAdventure.Instance == null || DungeonAdventure.Instance.SelectedHero == null)
             // {
