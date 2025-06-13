@@ -4,7 +4,7 @@ namespace Model
 {
     public class Warrior : Hero
     {
-        public Warrior(string name) : base(name,10, 20, 20, 20f, 15f,1)
+        public Warrior(string name) : base(name,100, 20, 20, 20f, 1f,1)
         {
             Portrait = Resources.Load<Sprite>("Portraits/WarriorPortrait");
             Description = "A powerful melee fighter with a chance to strike twice.";
@@ -14,7 +14,7 @@ namespace Model
         {
             if (target == null || !target.IsAlive()) return;
 
-            base.Attack(target); // First attack
+            base.Attack(target); // First attack 
 
             // 25% chance to strike again
             if (Random.value < 0.25f)

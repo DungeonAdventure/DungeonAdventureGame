@@ -3,7 +3,7 @@ namespace Model
     public abstract class DungeonCharacter
     {
         private string name;
-        private int hitPoints;
+        internal int hitPoints;
         private int damageMin;
         private int damageMax;
         private float attackSpeed;
