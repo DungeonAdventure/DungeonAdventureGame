@@ -7,7 +7,7 @@ namespace Controller {
         public static SceneTransitionManager Instance;
         public Vector2Int nextPlayerPosition;
         public string lastExitDirection;
-
+    
         private void Awake() {
             if (Instance == null) {
                 Instance = this;
@@ -92,6 +92,14 @@ namespace Controller {
                     return true;
             }
             return false;
+        }
+        
+        
+        // ✅ 这个方法必须在类里面，不可以写在类外！
+        public void LoadSceneAtPosition(string sceneName, Vector2Int position)
+        {
+            nextPlayerPosition = position;
+            SceneManager.LoadScene(sceneName);
         }
     }
 }

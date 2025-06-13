@@ -101,10 +101,37 @@ public class CharacterSelectManager : MonoBehaviour
     }
     
     // Called when user presses start and confirms name
+    // public void OnStartGameButtonPressed()
+    // {
+    //     UpdateCharacterNameInput();
+    //     Debug.Log("🚨 OnStartGameButtonPressed called");
+    //     if (string.IsNullOrEmpty(selectedClass))
+    //     {
+    //         Debug.LogWarning("⚠ No class selected!");
+    //         return;
+    //     }
+    //
+    //     string enteredName = nameInputField.text.Trim();
+    //     UpdateCharacterNameInput();
+    //     Debug.Log($"Entered Name: {enteredName}");
+    //     if (string.IsNullOrEmpty(enteredName))
+    //     {
+    //         Debug.LogWarning("⚠ No name entered!");
+    //         return;
+    //     }
+    //
+    //     selectedHero = HeroFactory.CreateHero(selectedClass, enteredName);
+    //     Debug.Log($"🚀 Starting game with: {selectedHero.Name} the {selectedClass}");
+    //     GameController.Instance.SetHero(selectedHero);
+    //     FindObjectOfType<UIManager>().OnStartGameClicked();
+    //
+    //     // TODO: Pass `selectedHero` to game scene or GameManager
+    // }
     public void OnStartGameButtonPressed()
     {
         UpdateCharacterNameInput();
         Debug.Log("🚨 OnStartGameButtonPressed called");
+
         if (string.IsNullOrEmpty(selectedClass))
         {
             Debug.LogWarning("⚠ No class selected!");
@@ -112,20 +139,24 @@ public class CharacterSelectManager : MonoBehaviour
         }
 
         string enteredName = nameInputField.text.Trim();
-        UpdateCharacterNameInput();
-        Debug.Log($"Entered Name: {enteredName}");
         if (string.IsNullOrEmpty(enteredName))
         {
             Debug.LogWarning("⚠ No name entered!");
             return;
         }
 
+        // ✅ 创建角色
         selectedHero = HeroFactory.CreateHero(selectedClass, enteredName);
         Debug.Log($"🚀 Starting game with: {selectedHero.Name} the {selectedClass}");
-        GameController.Instance.SetHero(selectedHero);
-        FindObjectOfType<UIManager>().OnStartGameClicked();
 
-        // TODO: Pass `selectedHero` to game scene or GameManager
+        // ✅ 关键步骤：保存到 HeroStorage 以便后续 SaveGame 使用
+        HeroStorage.Instance.SetHero(selectedHero);
+
+        // ✅ 传递给 GameController（如果有角色控制器）
+        GameController.Instance.SetHero(selectedHero);
+
+        // ✅ 切换到主游戏画面
+        FindObjectOfType<UIManager>().OnStartGameClicked();
     }
 
     // Finalize selection after player enters their name

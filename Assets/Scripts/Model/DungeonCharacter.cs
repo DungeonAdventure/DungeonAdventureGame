@@ -35,5 +35,10 @@ namespace Model
         public abstract void TakeDamage(int damage);
 
         public abstract bool IsAlive();
+        
+        // public void LoadFromSaveData(CharacterSaveData data)
+        // {
+        //     HitPoints = data.hitPoints;
+        // }
     }
 }

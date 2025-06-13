@@ -4,7 +4,7 @@ namespace Model
 {
     public class Warrior : Hero
     {
-        public Warrior(string name) : base(name, 120, 10, 20, 1f, 5f, 0.2f)
+        public Warrior(string name) : base(name,10, 20, 20, 20f, 15f,1)
         {
             Portrait = Resources.Load<Sprite>("Portraits/WarriorPortrait");
             Description = "A powerful melee fighter with a chance to strike twice.";

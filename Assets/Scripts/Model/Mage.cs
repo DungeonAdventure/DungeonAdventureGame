@@ -32,7 +32,7 @@ namespace Model
 {
     public class Mage : Hero
     {
-        public Mage(string name) : base(name, 75, 12, 15, 2f, 5f, 0.35f)
+        public Mage(string name) : base(name, 10, 12, 15, 20, 5f, 25f)
         {
             Portrait = Resources.Load<Sprite>("Portraits/MagePortrait");
             Description = "A mystical spellcaster capable of healing wounds and unleashing arcane blasts.";

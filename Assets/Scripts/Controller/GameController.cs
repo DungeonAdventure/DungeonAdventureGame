@@ -23,6 +23,9 @@ namespace Controller
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject); // Make persistent
+                
+                SaveSystem.InitializeDatabase();
+                Debug.Log("📂 数据库位置: " + Application.persistentDataPath + "/DungeonSave.db");
             }
             else
             {
@@ -41,19 +44,21 @@ namespace Controller
             StartCoroutine(SpawnHeroAt(position));
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator SpawnHeroAt(Vector2 position)
         {
             GameObject heroObj;
+
             if (heroPrefab == null)
             {
-                Debug.LogError("Hero prefab not assigned!");
+                Debug.LogError("❌ Hero prefab not assigned!");
                 yield break;
             }
 
             if (persistentHero == null)
             {
                 heroObj = Instantiate(heroPrefab, position, Quaternion.identity);
-                heroObj.name = $"{CurrentHero.Name}";
+                heroObj.name = $"{CurrentHero?.Name ?? "UnnamedHero"}";
 
                 DontDestroyOnLoad(heroObj);
                 persistentHero = heroObj;
@@ -64,49 +69,77 @@ namespace Controller
                 heroObj.transform.position = position;
             }
 
-            // Load hero stats
+            // 加载玩家数据（HP、攻击力等）
             CustomPlayer playerScript = heroObj.GetComponent<CustomPlayer>();
             if (playerScript != null && CurrentHero != null)
             {
                 playerScript.LoadHeroStats(CurrentHero);
+                Debug.Log("✅ Player stats loaded.");
             }
-
-            // Assign the Animator dynamically
-            Transform graphics = heroObj.transform.Find("Graphics");
-            Animator animator = graphics != null ? graphics.GetComponentInChildren<Animator>() : null;
-            Debug.Log($"[Anim Setup] Animator assigned to player: {(animator != null ? "✅ found" : "❌ null")}");
-
-            // Animator animator = heroObj.GetComponentInChildren<Animator>();
-            if (playerScript != null && animator != null)
+            else
             {
-                playerScript.SetAnimator(animator); // use your setter
-                Debug.Log(
-                    $"[Anim Setup] Animator assigned to player: {animator?.runtimeAnimatorController?.name ?? "null"}");
+                if (playerScript == null)
+                    Debug.LogError("❌ CustomPlayer component is missing!");
 
+                if (CurrentHero == null)
+                    Debug.LogError("❌ CurrentHero is null. Did you forget SetHero()?");
             }
 
-            // Assign SpriteRenderer + Animator to Graphic
-            CustomPlayerGraphic graphic = heroObj.GetComponent<CustomPlayerGraphic>();
-            Debug.Log($"[Anim Setup] CustomPlayerGraphic component found? {(graphic != null ? "✅ yes" : "❌ no")}");
-
-            if (graphic != null)
+            // 获取 Graphics 子物体中的 SpriteRenderer 和 Animator
+            Transform graphicsObj = heroObj.transform.Find("Graphics");
+            if (graphicsObj != null)
             {
-                graphic.SetComponents(
-                    heroObj.GetComponentInChildren<SpriteRenderer>(),
-                    animator
-                );
+                SpriteRenderer graphicsRenderer = graphicsObj.GetComponent<SpriteRenderer>();
+                Animator graphicsAnimator = graphicsObj.GetComponent<Animator>();
+
+                if (playerScript != null && graphicsAnimator != null)
+                {
+                    playerScript.SetAnimator(graphicsAnimator);
+                    Debug.Log($"✅ Animator controller set: {graphicsAnimator.runtimeAnimatorController?.name}");
+                }
+
+                CustomPlayerGraphic graphic = heroObj.GetComponent<CustomPlayerGraphic>();
+                if (graphic != null)
+                {
+                    graphic.SetComponents(graphicsRenderer, graphicsAnimator);
+                    Debug.Log("✅ Graphic components set from Graphics child.");
+                }
+                else
+                {
+                    Debug.LogWarning("⚠ CustomPlayerGraphic component not found on root.");
+                }
+            }
+            else
+            {
+                Debug.LogError("❌ 'Graphics' child object not found on hero prefab!");
             }
 
-            // ✅ Wait for camera to load after scene transition
+            // 设置相机跟随
             CinemachineCamera vcam = FindObjectOfType<CinemachineCamera>();
             if (vcam != null)
             {
                 vcam.Follow = heroObj.transform;
+                Debug.Log("✅ Cinemachine camera is following the hero.");
             }
             else
             {
-                Debug.LogWarning("⚠ CinemachineVirtualCamera not found in scene.");
+                Debug.LogWarning("⚠ Cinemachine camera not found in scene.");
             }
+
+            // ✅ 设置当前房间为已访问（关键修复）
+            Room currentRoom = Dungeon.Instance.GetRoom(Dungeon.Instance.playerPosition);
+            if (currentRoom != null)
+            {
+                currentRoom.visited = true;
+                Debug.Log($"✅ 当前房间 {Dungeon.Instance.playerPosition} 已设置为已访问！");
+            }
+            else
+            {
+                Debug.LogWarning("⚠ 无法找到当前位置的房间，无法标记为已访问。");
+            }
+
+            yield return null;
         }
+        
     }
 }
