@@ -6,9 +6,8 @@
 **Language:** C#  
 **Design Patterns Used:** MVC, Factory, Singleton, Observer  
 **Assets:** Forest Pixel Land  
-**Assets:** [Pixel World - Forest and Village](https://assetstore.unity.com/packages/2d/environments/pixel-world-forest-and-village-315158)
-
 **Save System:** SQLite (JSON prototype attempted)
+**Assets:** [Pixel World - Forest and Village](https://assetstore.unity.com/packages/2d/environments/pixel-world-forest-and-village-315158)
 
 ---
 
