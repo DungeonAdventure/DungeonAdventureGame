@@ -4,10 +4,24 @@ using Mono.Data.Sqlite;
 using UnityEngine;
 using Model;
 
+/// <summary>
+/// Responsible for creating <see cref="Monster"/> instances using saved data from a SQLite database.
+/// </summary>
 public static class MonsterFactory
 {
+    /// <summary>
+    /// The path to the SQLite database file used for loading monster data.
+    /// </summary>
     private static string _dbPath = "URI=file:" + Application.persistentDataPath + "/dungeon_save.db";
 
+    /// <summary>
+    /// Creates a <see cref="Monster"/> by reading its attributes from the database using the given name.
+    /// </summary>
+    /// <param name="name">The name of the monster to load from the database.</param>
+    /// <returns>
+    /// A new <see cref="GenericMonster"/> instance with data populated from the database,
+    /// or <c>null</c> if the monster was not found.
+    /// </returns>
     public static Monster CreateMonsterFromDB(string name)
     {
         using var conn = new SqliteConnection(_dbPath);

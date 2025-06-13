@@ -1,50 +1,58 @@
 ﻿using UnityEngine;
 using Model;
 
-
 namespace GameScripts.Control
 {
+    /// <summary>
+    /// Central game manager responsible for initializing the game state, including hero instantiation and pillar tracking.
+    /// </summary>
     public class MainGameManager : MonoBehaviour
     {
+        /// <summary>
+        /// Singleton instance of the MainGameManager.
+        /// </summary>
         public static MainGameManager Instance { get; private set; }
+
+        /// <summary>
+        /// Spawn point for the player character in the scene.
+        /// </summary>
         public Transform spawnPoint;
+
+        /// <summary>
+        /// Prefab used to instantiate a Warrior.
+        /// </summary>
         public GameObject warriorPrefab;
+
+        /// <summary>
+        /// Prefab used to instantiate a Thief.
+        /// </summary>
         public GameObject thiefPrefab;
+
+        /// <summary>
+        /// Prefab used to instantiate a Priestess.
+        /// </summary>
         public GameObject priestessPrefab;
+
+        /// <summary>
+        /// Collector for tracking collected Pillars of OOP.
+        /// </summary>
         public PillarCollector PillarCollector { get; private set; }
 
+        /// <summary>
+        /// Unity's Start method. Called on the frame when the script is enabled just before any Update methods are called.
+        /// Initializes the save system and previously contained hero instantiation logic.
+        /// </summary>
         void Start()
         {
             SaveSystem.InitializeDatabase();
 
-            
-            // // ⛔ avoid empty null 
-            // if (DungeonAdventure.Instance == null || DungeonAdventure.Instance.SelectedHero == null)
-            // {
-            //     Debug.LogWarning("🛑 DungeonAdventure.Instance 或 SelectedHero 为 null，跳过生成英雄！");
-            //     Debug.Log("MainGameManager.Start 被调用了！");
-            //     return;
-            // }
-            //
-            // Hero hero = DungeonAdventure.Instance.SelectedHero;
-            // GameObject heroObj = null;
-            //
-            // if (hero is Warrior)
-            // {
-            //     Debug.Log("🛠 是 Warrior，准备生成...");
-            //     heroObj = Instantiate(warriorPrefab, spawnPoint.position, Quaternion.identity);
-            // }
-            // else if (hero is Thief)
-            // {
-            //     Debug.Log("🛠 是 Thief，准备生成...");
-            //     heroObj = Instantiate(thiefPrefab, spawnPoint.position, Quaternion.identity);
-            // }
-            // else if (hero is Priestess)
-            // {
-            //     Debug.Log("🛠 是 Priestess，准备生成...");
-            //     heroObj = Instantiate(priestessPrefab, spawnPoint.position, Quaternion.identity);
-            // }
+            // Legacy hero instantiation was previously handled here.
         }
+
+        /// <summary>
+        /// Unity's Awake method. Initializes the singleton instance and ensures persistence across scenes.
+        /// Also initializes the PillarCollector.
+        /// </summary>
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -56,21 +64,21 @@ namespace GameScripts.Control
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            PillarCollector = new PillarCollector(); // 💡 Initialize collector
+            PillarCollector = new PillarCollector();
         }
-        
+
+        /// <summary>
+        /// Exits the game when called. Works both in the Unity Editor and in a built application.
+        /// </summary>
         public void OnExitGameClicked()
         {
             Debug.Log("❌ Exit button clicked. Quitting game...");
 
-            #if UNITY_EDITOR
-                        // 在 Unity 编辑器中运行时停止播放
-                        UnityEditor.EditorApplication.isPlaying = false;
-            #else
-                        // 打包后退出游戏
-                        Application.Quit();
-            #endif
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
-
     }
 }

@@ -7,23 +7,38 @@ namespace Controller
     using Unity.Cinemachine;
     using System.Collections;
 
+    /// <summary>
+    /// Controls the game lifecycle, hero instantiation, and camera setup.
+    /// Maintains a singleton instance and persists across scenes.
+    /// </summary>
     public class GameController : MonoBehaviour
     {
+        /// <summary>
+        /// Singleton instance of the GameController.
+        /// </summary>
         public static GameController Instance { get; private set; }
-        
 
+        /// <summary>
+        /// The currently selected and active hero.
+        /// </summary>
         public Hero CurrentHero { get; private set; }
 
-        [Header("References")] public GameObject heroPrefab;
+        [Header("References")]
+        [Tooltip("Prefab used to spawn the hero in the game world.")]
+        public GameObject heroPrefab;
+
         private GameObject persistentHero;
 
+        /// <summary>
+        /// Ensures a single persistent instance and initializes the database.
+        /// </summary>
         private void Awake()
         {
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject); // Make persistent
-                
+                DontDestroyOnLoad(gameObject);
+
                 SaveSystem.InitializeDatabase();
                 Debug.Log("📂 数据库位置: " + Application.persistentDataPath + "/DungeonSave.db");
             }
@@ -33,18 +48,30 @@ namespace Controller
             }
         }
 
+        /// <summary>
+        /// Sets the currently active hero.
+        /// </summary>
+        /// <param name="hero">The hero instance to set as current.</param>
         public void SetHero(Hero hero)
         {
             CurrentHero = hero;
             Debug.Log($"🎯 SetHero() called! Hero = {hero?.Name ?? "null"} on instance ID {GetInstanceID()}");
         }
-        
+
+        /// <summary>
+        /// Starts a coroutine to spawn the hero at a specified position.
+        /// </summary>
+        /// <param name="position">World position to spawn the hero.</param>
         public void StartHeroSpawn(Vector2 position)
         {
             StartCoroutine(SpawnHeroAt(position));
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
+        /// <summary>
+        /// Coroutine that handles instantiating the hero, assigning components,
+        /// and setting up the camera and room visitation.
+        /// </summary>
+        /// <param name="position">World position to spawn the hero.</param>
         private IEnumerator SpawnHeroAt(Vector2 position)
         {
             GameObject heroObj;
@@ -69,7 +96,6 @@ namespace Controller
                 heroObj.transform.position = position;
             }
 
-            // 加载玩家数据（HP、攻击力等）
             CustomPlayer playerScript = heroObj.GetComponent<CustomPlayer>();
             if (playerScript != null && CurrentHero != null)
             {
@@ -85,7 +111,6 @@ namespace Controller
                     Debug.LogError("❌ CurrentHero is null. Did you forget SetHero()?");
             }
 
-            // 获取 Graphics 子物体中的 SpriteRenderer 和 Animator
             Transform graphicsObj = heroObj.transform.Find("Graphics");
             if (graphicsObj != null)
             {
@@ -114,7 +139,6 @@ namespace Controller
                 Debug.LogError("❌ 'Graphics' child object not found on hero prefab!");
             }
 
-            // 设置相机跟随
             CinemachineCamera vcam = FindObjectOfType<CinemachineCamera>();
             if (vcam != null)
             {
@@ -126,7 +150,6 @@ namespace Controller
                 Debug.LogWarning("⚠ Cinemachine camera not found in scene.");
             }
 
-            // ✅ 设置当前房间为已访问（关键修复）
             Room currentRoom = Dungeon.Instance.GetRoom(Dungeon.Instance.playerPosition);
             if (currentRoom != null)
             {
@@ -140,6 +163,5 @@ namespace Controller
 
             yield return null;
         }
-        
     }
 }

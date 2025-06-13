@@ -3,36 +3,45 @@ using Controller;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
+/// <summary>
+/// Manages UI panels and transitions for the main menu, character selection, and in-game UI.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
-    // 主菜单面板（Start Game / Load Game / Settings / Exit）
+    // === UI PANELS ===
+
+    /// <summary>Main menu panel (Start Game, Load Game, etc.).</summary>
     public GameObject panelMainMenu;
 
-    // 角色选择面板（选择 Warrior / Thief / Priestess）
+    /// <summary>Character selection panel (Warrior, Thief, Priestess).</summary>
     public GameObject panelCharacterSelect;
 
-    // 主菜单背景
+    /// <summary>Background for main menu.</summary>
     public GameObject backgroundMain;
 
-    // 角色选择背景
+    /// <summary>Background for character selection screen.</summary>
     public GameObject backgroundCharacter;
 
-    // 黑色半透明遮罩层（用来突出弹窗）
+    /// <summary>Dimmed overlay for highlighting modal windows.</summary>
     public GameObject overlayDim;
 
-    // 加载游戏面板（包含三个存档按钮）
+    /// <summary>Load game panel with saved game slots.</summary>
     public GameObject panelLoadGame;
 
-    // 英雄命名面板（输入角色名字的界面）
+    /// <summary>Panel for entering the hero's name.</summary>
     public GameObject panelHeroName;
-    
+
+    /// <summary>Panel showing information about the game.</summary>
     public GameObject panelGameInformation;
-    
+
+    /// <summary>Panel with settings or additional top-tab information.</summary>
     public GameObject panelTopTabSettings;
+
+    /// <summary>
+    /// Initializes the UI by enabling the main menu and hiding all other panels.
+    /// </summary>
     void Start()
     {
-        // 初始显示主菜单，隐藏其他所有面板
         panelMainMenu.SetActive(true);
         panelCharacterSelect.SetActive(false);
         backgroundMain.SetActive(true);
@@ -40,17 +49,15 @@ public class UIManager : MonoBehaviour
         overlayDim.SetActive(false);
         panelHeroName.SetActive(false);
         panelLoadGame.SetActive(false);
-        
-        
-        
         panelGameInformation.SetActive(false);
         panelTopTabSettings.SetActive(false);
     }
 
-    // 玩家点击主菜单中的“Start Game”
+    /// <summary>
+    /// Called when the player clicks "Start Game". Loads the gameplay scene and starts dialogue.
+    /// </summary>
     public void OnStartGameClicked()
     {
-        // 隐藏主菜单和角色选择等所有 UI（实际应跳转到游戏场景）
         panelMainMenu.SetActive(false);
         panelCharacterSelect.SetActive(false);
         backgroundMain.SetActive(false);
@@ -58,27 +65,21 @@ public class UIManager : MonoBehaviour
         overlayDim.SetActive(false);
         panelHeroName.SetActive(false);
         panelLoadGame.SetActive(false);
-        
-        
         panelGameInformation.SetActive(false);
         panelTopTabSettings.SetActive(false);
-        
-        if (SceneManager.sceneCount == 1) {
-     
+
+        if (SceneManager.sceneCount == 1)
+        {
             SceneManager.LoadScene("5thScenes", LoadSceneMode.Additive);
             StartCoroutine(LoadSceneAndStartDialogue());
         }
-        
     }
-    
+
+    /// <summary>
+    /// Coroutine that waits for the gameplay scene to load and then starts dialogue.
+    /// </summary>
     private IEnumerator LoadSceneAndStartDialogue()
     {
-        // AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("5thScenes", LoadSceneMode.Additive);
-        //
-        // while (!asyncLoad.isDone)
-        //     yield return null;
-
-        // ✅ Use the new Unity-recommended method
         DialogueManager manager = Object.FindFirstObjectByType<DialogueManager>();
         if (manager != null)
         {
@@ -92,90 +93,99 @@ public class UIManager : MonoBehaviour
         return null;
     }
 
-
-    
-    // 显示英雄命名面板
+    /// <summary>
+    /// Shows the hero naming panel after a character is selected.
+    /// </summary>
+    /// <param name="heroName">The default name or selected hero name (currently unused).</param>
     public void ShowHeroName(string heroName)
     {
-        panelCharacterSelect.SetActive(false); // 隐藏角色选择界面
-        panelHeroName.SetActive(true);         // 显示命名输入面板
-        overlayDim.SetActive(true);            // 开启遮罩防止误点其他 UI
-        
+        panelCharacterSelect.SetActive(false);
+        panelHeroName.SetActive(true);
+        overlayDim.SetActive(true);
     }
-    
-    // 显示 游戏信息面板
+
+    /// <summary>
+    /// Displays the top tab settings panel from the main menu.
+    /// </summary>
     public void ShowGTopTabSettings()
-    {   
+    {
         Debug.Log("panelTopTabSettings called ");
-        panelMainMenu.SetActive(false);            // 隐藏主菜单
-        panelTopTabSettings.SetActive(true);    // 显示游戏介绍面板
-        overlayDim.SetActive(true);                // 显示黑色遮罩
+        panelMainMenu.SetActive(false);
+        panelTopTabSettings.SetActive(true);
+        overlayDim.SetActive(true);
     }
-    
-    // 显示 游戏信息面板
+
+    /// <summary>
+    /// Displays the game information panel from the main menu or settings.
+    /// </summary>
     public void ShowGameInformation()
-    {   
+    {
         Debug.Log("Game Information used");
-        panelMainMenu.SetActive(false);            // 隐藏主菜单
-        panelGameInformation.SetActive(true);    // 显示游戏介绍面板
-        panelTopTabSettings.SetActive(false); 
-        overlayDim.SetActive(true);                // 显示黑色遮罩
-        
+        panelMainMenu.SetActive(false);
+        panelGameInformation.SetActive(true);
+        panelTopTabSettings.SetActive(false);
+        overlayDim.SetActive(true);
         Debug.Log("panelGameInformation activeSelf: " + panelGameInformation.activeSelf);
     }
 
-    // 玩家点击主菜单中的“Load Game”按钮
+    /// <summary>
+    /// Called when the "Load Game" button is clicked on the main menu.
+    /// </summary>
     public void OnLoadGameClicked()
-    {   
+    {
         Debug.Log("✅ Load Game button clicked!");
-        panelMainMenu.SetActive(false);        // 隐藏主菜单
-        panelLoadGame.SetActive(true);         // 显示加载面板
-        overlayDim.SetActive(true);            // 显示遮罩层
+        panelMainMenu.SetActive(false);
+        panelLoadGame.SetActive(true);
+        overlayDim.SetActive(true);
     }
 
-    // 玩家从 Load Game 面板点击“返回”按钮
+    /// <summary>
+    /// Returns from the load game screen to the main menu.
+    /// </summary>
     public void OnBackFromLoadGame()
     {
-        panelLoadGame.SetActive(false);        // 隐藏加载游戏面板
-        panelMainMenu.SetActive(true);         // 返回主菜单
-        overlayDim.SetActive(false);           // 隐藏遮罩
+        panelLoadGame.SetActive(false);
+        panelMainMenu.SetActive(true);
+        overlayDim.SetActive(false);
     }
 
-    // 玩家在命名面板点击“取消”按钮时调用
+    /// <summary>
+    /// Cancels hero naming and returns to the character selection panel.
+    /// </summary>
     public void CancelHeroNaming()
     {
-        panelHeroName.SetActive(false);        // 隐藏命名面板
-        panelCharacterSelect.SetActive(true);  // 返回角色选择界面
-        overlayDim.SetActive(false);           // 隐藏遮罩
+        panelHeroName.SetActive(false);
+        panelCharacterSelect.SetActive(true);
+        overlayDim.SetActive(false);
     }
 
-    // 返回主菜单（通常是从角色选择界面触发）
+    /// <summary>
+    /// Returns to the main menu from the character selection or other panels.
+    /// </summary>
     public void OnBackToMenu()
     {
-        panelCharacterSelect.SetActive(false); // 隐藏角色选择
-        panelMainMenu.SetActive(true);         // 显示主菜单
-        backgroundMain.SetActive(true);        // 显示主菜单背景
-        backgroundCharacter.SetActive(false);  // 隐藏角色选择背景
-        overlayDim.SetActive(false);           // 隐藏遮罩
-        panelHeroName.SetActive(false);        // 隐藏命名面板（确保清除）
+        panelCharacterSelect.SetActive(false);
+        panelMainMenu.SetActive(true);
+        backgroundMain.SetActive(true);
+        backgroundCharacter.SetActive(false);
+        overlayDim.SetActive(false);
+        panelHeroName.SetActive(false);
         panelLoadGame.SetActive(false);
-        
-        //new panel
         panelGameInformation.SetActive(false);
         panelTopTabSettings.SetActive(false);
     }
-    
+
+    /// <summary>
+    /// Quits the game or stops play mode in the Unity editor.
+    /// </summary>
     public void OnExitGameClicked()
     {
         Debug.Log("❌ Exit button clicked. Quitting game...");
 
-        #if UNITY_EDITOR
-                // 在 Unity 编辑器中运行时停止播放
-                UnityEditor.EditorApplication.isPlaying = false;
-        #else
-            // 打包后退出游戏
-            Application.Quit();
-        #endif
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
-
 }

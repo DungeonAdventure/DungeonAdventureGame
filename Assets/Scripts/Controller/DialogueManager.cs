@@ -5,30 +5,53 @@ using TMPro;
 
 namespace Controller
 {
+    /// <summary>
+    /// Manages and displays dialogue sequences with typewriter effects, character images, and autoplay functionality.
+    /// </summary>
     public class DialogueManager : MonoBehaviour
     {
         [Header("UI Elements")]
+        [Tooltip("The panel that contains the dialogue UI.")]
         public GameObject dialoguePanel;
+
+        [Tooltip("Text component for displaying dialogue lines.")]
         public TextMeshProUGUI dialogueText;
+
+        [Tooltip("Image used to display the character portrait.")]
         public Image characterImage;
 
         [Header("Dialogue Settings")]
-        public Sprite[] characterSprites; // 多种头像
-        public string[] lines;            // 对话文本
+        [Tooltip("Array of character sprites to be shown during dialogue.")]
+        public Sprite[] characterSprites;
+
+        [Tooltip("Array of dialogue lines to be shown in sequence.")]
+        public string[] lines;
+
+        [Tooltip("Delay in seconds between each character typed.")]
         public float typingSpeed = 0.05f;
-        public bool autoPlay = true;      // 是否自动下一句
+
+        [Tooltip("Whether to automatically proceed to the next line.")]
+        public bool autoPlay = true;
 
         private int _index;
         private bool _isTyping;
 
-        public bool IsDialoguePlaying { get; private set; } // ✅ 用于外部判断状态
+        /// <summary>
+        /// Indicates whether a dialogue sequence is currently playing.
+        /// </summary>
+        public bool IsDialoguePlaying { get; private set; }
 
+        /// <summary>
+        /// Hides the dialogue panel on start.
+        /// </summary>
         void Start()
         {
             dialoguePanel.SetActive(false);
         }
-        
-        // ReSharper disable Unity.PerformanceAnalysis
+
+        /// <summary>
+        /// Starts the dialogue sequence from the beginning.
+        /// </summary>
         public void BeginDialogue()
         {
             dialoguePanel.SetActive(true);
@@ -37,24 +60,9 @@ namespace Controller
             StartCoroutine(TypeLine());
         }
 
-        // void Update()
-        // {
-        //     if (Input.GetKeyDown(KeyCode.Space))
-        //     {
-        //         if (_isTyping)
-        //         {
-        //             StopAllCoroutines();
-        //             dialogueText.text = lines[_index];
-        //             _isTyping = false;
-        //         }
-        //         else
-        //         {
-        //             NextLine();
-        //         }
-        //     }
-        // }
-
-        // ReSharper disable Unity.PerformanceAnalysis
+        /// <summary>
+        /// Coroutine to type out each character of the current dialogue line.
+        /// </summary>
         IEnumerator TypeLine()
         {
             _isTyping = true;
@@ -75,6 +83,9 @@ namespace Controller
             }
         }
 
+        /// <summary>
+        /// Moves to the next line in the dialogue sequence or ends the dialogue.
+        /// </summary>
         void NextLine()
         {
             _index++;

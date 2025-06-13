@@ -4,6 +4,9 @@ using TMPro;
 using UnityEngine.UI;
 using Model;
 
+/// <summary>
+/// Manages the character selection process, including class choice, name entry, and UI updates.
+/// </summary>
 public class CharacterSelectManager : MonoBehaviour
 {
     [Header("UI References")]
@@ -26,14 +29,20 @@ public class CharacterSelectManager : MonoBehaviour
     public Button confirmCharacterSelectionButton;
     public Button confirmCharacterNameButton;
 
+    /// <summary>
+    /// Initializes input listeners and updates confirm buttons on start.
+    /// </summary>
     void Start()
     {
         nameInputField.onValueChanged.AddListener(delegate { UpdateConfirmButtonCharacterSelect(); });
-        UpdateConfirmButtonCharacterSelect(); // initialize state
+        UpdateConfirmButtonCharacterSelect();
         nameInputField.onValueChanged.AddListener(delegate { UpdateCharacterNameInput(); });
         UpdateCharacterNameInput();
     }
 
+    /// <summary>
+    /// Selects the Warrior class and previews the character.
+    /// </summary>
     public void SelectWarrior()
     {
         Debug.Log("✅ Warrior selected!");
@@ -43,6 +52,9 @@ public class CharacterSelectManager : MonoBehaviour
         UpdateConfirmButtonCharacterSelect();
     }
 
+    /// <summary>
+    /// Selects the Thief class and previews the character.
+    /// </summary>
     public void SelectThief()
     {
         Debug.Log("✅ Thief selected!");
@@ -52,6 +64,9 @@ public class CharacterSelectManager : MonoBehaviour
         UpdateConfirmButtonCharacterSelect();
     }
 
+    /// <summary>
+    /// Selects the Mage class and previews the character.
+    /// </summary>
     public void SelectMage()
     {
         Debug.Log("✅ Mage selected!");
@@ -61,12 +76,18 @@ public class CharacterSelectManager : MonoBehaviour
         UpdateConfirmButtonCharacterSelect();
     }
 
+    /// <summary>
+    /// Previews the selected hero class using a placeholder name.
+    /// </summary>
     private void PreviewHero()
     {
-        selectedHero = HeroFactory.CreateHero(selectedClass, "Hero"); // Preview with placeholder name
+        selectedHero = HeroFactory.CreateHero(selectedClass, "Hero");
         UpdateHeroUI();
     }
 
+    /// <summary>
+    /// Updates the UI to reflect the stats and description of the selected hero.
+    /// </summary>
     private void UpdateHeroUI()
     {
         if (selectedHero == null)
@@ -75,58 +96,35 @@ public class CharacterSelectManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Hero Stats - HP: {selectedHero.HitPoints}, ATK: {selectedHero.DamageMin}-{selectedHero.DamageMax}, SPD: {selectedHero.AttackSpeed}");
-
         textName.text = selectedHero.Name;
         textHP.text = "HP: " + selectedHero.HitPoints;
         textATK.text = "ATK: " + selectedHero.DamageMin + " - " + selectedHero.DamageMax;
         textSPEED.text = "SPD: " + selectedHero.AttackSpeed;
         textDescription.text = selectedHero.Description;
-
-        // Optional if using portraits
-        // portraitImage.sprite = selectedHero.Portrait;
     }
 
+    /// <summary>
+    /// Enables or disables the class confirm button depending on selection.
+    /// </summary>
     private void UpdateConfirmButtonCharacterSelect()
     {
         bool classSelected = !string.IsNullOrEmpty(selectedClass);
         confirmCharacterSelectionButton.interactable = classSelected;
     }
 
+    /// <summary>
+    /// Enables or disables the name confirm button based on input validity.
+    /// </summary>
     private void UpdateCharacterNameInput()
     {
         string enteredName = nameInputField.text.Trim();
         bool nameValid = !string.IsNullOrEmpty(enteredName);
         confirmCharacterNameButton.interactable = nameValid;
     }
-    
-    // Called when user presses start and confirms name
-    // public void OnStartGameButtonPressed()
-    // {
-    //     UpdateCharacterNameInput();
-    //     Debug.Log("🚨 OnStartGameButtonPressed called");
-    //     if (string.IsNullOrEmpty(selectedClass))
-    //     {
-    //         Debug.LogWarning("⚠ No class selected!");
-    //         return;
-    //     }
-    //
-    //     string enteredName = nameInputField.text.Trim();
-    //     UpdateCharacterNameInput();
-    //     Debug.Log($"Entered Name: {enteredName}");
-    //     if (string.IsNullOrEmpty(enteredName))
-    //     {
-    //         Debug.LogWarning("⚠ No name entered!");
-    //         return;
-    //     }
-    //
-    //     selectedHero = HeroFactory.CreateHero(selectedClass, enteredName);
-    //     Debug.Log($"🚀 Starting game with: {selectedHero.Name} the {selectedClass}");
-    //     GameController.Instance.SetHero(selectedHero);
-    //     FindObjectOfType<UIManager>().OnStartGameClicked();
-    //
-    //     // TODO: Pass `selectedHero` to game scene or GameManager
-    // }
+
+    /// <summary>
+    /// Called when the user confirms character and name to begin the game.
+    /// </summary>
     public void OnStartGameButtonPressed()
     {
         UpdateCharacterNameInput();
@@ -145,32 +143,27 @@ public class CharacterSelectManager : MonoBehaviour
             return;
         }
 
-        // ✅ 创建角色
         selectedHero = HeroFactory.CreateHero(selectedClass, enteredName);
         Debug.Log($"🚀 Starting game with: {selectedHero.Name} the {selectedClass}");
 
-        // ✅ 关键步骤：保存到 HeroStorage 以便后续 SaveGame 使用
         HeroStorage.Instance.SetHero(selectedHero);
-
-        // ✅ 传递给 GameController（如果有角色控制器）
         GameController.Instance.SetHero(selectedHero);
-
-        // ✅ 切换到主游戏画面
         FindObjectOfType<UIManager>().OnStartGameClicked();
     }
 
-    // Finalize selection after player enters their name
-    // public Hero FinalizeHeroSelection(string heroName)
-    // {
-    //     return HeroFactory.CreateHero(selectedClass, heroName);
-    // }
-
-    // For UI or other systems to retrieve selected hero
+    /// <summary>
+    /// Gets the currently selected hero object.
+    /// </summary>
+    /// <returns>The selected <see cref="Hero"/>.</returns>
     public Hero GetSelectedHero()
     {
         return selectedHero;
     }
 
+    /// <summary>
+    /// Gets the class name of the selected hero.
+    /// </summary>
+    /// <returns>Hero class name as a <see cref="string"/>.</returns>
     public string GetSelectedClass()
     {
         return selectedClass;

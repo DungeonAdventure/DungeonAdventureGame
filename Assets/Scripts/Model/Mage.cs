@@ -1,43 +1,28 @@
-// namespace Model
-// {
-//     using UnityEngine;
-//     using Model;
-//     
-//     public class Mage : Hero {
-//         public Mage(string name) : base(name, 75, 1, 5, 25, 45, 0.3f)
-//         {
-//             Portrait = Resources.Load<Sprite>("Portraits/WarriorPortrait");
-//             Description = "A wise healer with powerful support skills.";
-//         }
-//
-//         // public override void UseSpecialSkill()
-//         // {
-//         //     int heal = UnityEngine.Random.Range(30, 61);
-//         //     this.HitPoints += heal;
-//         //     if (this.HitPoints > this.MaxHitPoints)
-//         //         this.HitPoints = this.MaxHitPoints;
-//         //     
-//         //     UnityEngine.Debug.Log($"{Name} healed for {heal} HP!");
-//         // }
-//         public override void Attack(DungeonCharacter target)
-//         {
-//             
-//         }
-//     }
-// }
-
 using UnityEngine;
 
 namespace Model
 {
+    /// <summary>
+    /// Represents a Mage hero, a mystical spellcaster capable of healing and ranged attacks.
+    /// Inherits from <see cref="Hero"/>.
+    /// </summary>
     public class Mage : Hero
     {
+        /// <summary>
+        /// Initializes a new <see cref="Mage"/> with preset stats and portrait.
+        /// </summary>
+        /// <param name="name">The name of the mage.</param>
         public Mage(string name) : base(name, 10, 12, 15, 20, 5f, 25f)
         {
             Portrait = Resources.Load<Sprite>("Portraits/MagePortrait");
             Description = "A mystical spellcaster capable of healing wounds and unleashing arcane blasts.";
         }
 
+        /// <summary>
+        /// Performs a ranged magical attack against a target.
+        /// Has a chance to deal double damage as a critical hit.
+        /// </summary>
+        /// <param name="target">The <see cref="DungeonCharacter"/> to attack.</param>
         public override void Attack(DungeonCharacter target)
         {
             if (target == null || !target.IsAlive()) return;
@@ -52,13 +37,16 @@ namespace Model
             target.TakeDamage(damage);
         }
 
+        /// <summary>
+        /// Heals the Mage for a random amount between 20 and 39 HP.
+        /// </summary>
         public override void UseSpecialAbility()
         {
             int healAmount = Random.Range(20, 40);
             HitPoints += healAmount;
             Debug.Log($"{Name} heals for {healAmount} HP!");
 
-            // Optional: Clamp to max HP if needed in the future
+            // Optional: Clamp to MaxHitPoints if enforced elsewhere
         }
     }
 }
